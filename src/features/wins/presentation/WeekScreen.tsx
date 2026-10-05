@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,6 +10,7 @@ import { formatWeekRange } from '@/shared/lib/dates';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
 import { Fab } from '@/shared/ui/Fab';
+import { HeaderButton } from '@/shared/ui/HeaderButton';
 import type { WeekSummary } from '../application/getWeekSummary';
 import type { LogWinInput } from '../application/logWin';
 import { AddWinSheet } from './AddWinSheet';
@@ -25,15 +27,18 @@ export function WeekScreen() {
   const [adding, setAdding] = useState(false);
   const [closing, setClosing] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    container.getWeekSummary(weekOffset).then((result) => {
-      if (!cancelled) setSummary(result);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [weekOffset]);
+  // Tabs stay mounted, so reload on focus to pick up projects created elsewhere.
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      container.getWeekSummary(weekOffset).then((result) => {
+        if (!cancelled) setSummary(result);
+      });
+      return () => {
+        cancelled = true;
+      };
+    }, [weekOffset]),
+  );
 
   const onToggleMilestone = async (id: string, next: boolean) => {
     await container.toggleMilestone(id, next);
@@ -70,11 +75,11 @@ export function WeekScreen() {
               </Text>
             </View>
             <View style={styles.controls}>
-              <HeaderButton label="‹" a11y="Previous week" onPress={() => setWeekOffset((o) => o - 1)} />
-              <HeaderButton label="›" a11y="Next week" onPress={() => setWeekOffset((o) => Math.min(0, o + 1))} />
+              <HeaderButton label="‹" accessibilityLabel="Previous week" onPress={() => setWeekOffset((o) => o - 1)} />
+              <HeaderButton label="›" accessibilityLabel="Next week" onPress={() => setWeekOffset((o) => Math.min(0, o + 1))} />
               <HeaderButton
                 label={scheme === 'light' ? '☾' : '☀'}
-                a11y="Toggle theme"
+                accessibilityLabel="Toggle theme"
                 onPress={toggle}
               />
             </View>
@@ -152,19 +157,6 @@ export function WeekScreen() {
   );
 }
 
-function HeaderButton({ label, a11y, onPress }: { label: string; a11y: string; onPress: () => void }) {
-  const { colors } = useTheme();
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={a11y}
-      style={[styles.headerButton, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-      <Text style={{ fontSize: 18, color: colors.text }}>{label}</Text>
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   scroll: { alignItems: 'center', paddingBottom: 96 },
@@ -173,14 +165,6 @@ const styles = StyleSheet.create({
   titleBlock: { flexShrink: 1, gap: spacing.xs },
   title: { fontSize: 32, lineHeight: 36 },
   controls: { flexDirection: 'row', gap: spacing.sm },
-  headerButton: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
   closeLink: { minHeight: 44, justifyContent: 'center' },
   day: { gap: spacing.sm },

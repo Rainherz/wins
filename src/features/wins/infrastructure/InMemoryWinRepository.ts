@@ -8,6 +8,10 @@ export class InMemoryWinRepository implements WinRepository {
     this.wins = [...this.wins, win];
   }
 
+  async listAll() {
+    return this.wins;
+  }
+
   async listByRange(from: Date, to: Date) {
     return this.wins.filter((win) => win.achievedAt >= from && win.achievedAt < to);
   }

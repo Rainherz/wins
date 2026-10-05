@@ -2,6 +2,7 @@ import type { Win } from '../domain/win';
 
 export interface WinRepository {
   add(win: Win): Promise<void>;
+  listAll(): Promise<Win[]>;
   /** Wins achieved in [from, to). */
   listByRange(from: Date, to: Date): Promise<Win[]>;
   countByRange(from: Date, to: Date): Promise<number>;

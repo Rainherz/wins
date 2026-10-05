@@ -29,3 +29,7 @@ export const formatWeekRange = (start: Date) => {
   const end = addDays(start, 6);
   return `${formatShortDate(start)} – ${formatShortDate(end)}, ${end.getFullYear()}`;
 };
+
+/** Whole calendar days from `date` to `now` (0 = same day). */
+export const daysAgo = (date: Date, now: Date) =>
+  Math.round((startOfDay(now).getTime() - startOfDay(date).getTime()) / 86_400_000);
