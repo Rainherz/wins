@@ -107,6 +107,8 @@ glyphs or emoji as icons.
 | `WeekPulse`      | Total, project count, delta vs last week, and a 7-day strip with counts, bars and mood icons. Bars grow in once on load (the only authored motion). |
 | `DaySection`     | Day header (weekday, date, "Hoy", count, mood chip) plus the day's wins in one card with hairlines, or a calm empty state. |
 | `WinRow`         | Project dot, title, project, time, GitHub link when imported, milestone star. Milestone rows get the soft accent background and a filled star. |
+| `Markdown` | Draws Markdown with the app's own components and type scale (headings, lists, tables, code, quotes, links). Raw HTML and images are skipped on purpose: READMEs often open with centered logos and badges that would show as broken markup. |
+| `ReadmePanel` | The project's README in a card, collapsed to a preview with "show all". Stays out of the way when GitHub is not connected, since the pending panel already asks for that. |
 | `PendingWorkPanel` | Open issues and PRs of a project's GitHub repository, fetched live: PR and issue icons, draft state, labels, age, and a clear way out for every failure (not connected, rejected token, no access). |
 | `ProjectCard`    | Colored avatar, name, description, "Activo hace N días", this-week count and 7-day bars. |
 | `ProjectSelect`  | Chips with the project color. Replaces the native select. |

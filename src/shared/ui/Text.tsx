@@ -14,9 +14,10 @@ const SANS_BY_WEIGHT: Record<string, string> = {
  */
 export function Text({ style, ...props }: TextProps) {
   const flat = StyleSheet.flatten(style) ?? {};
-  const isSerif = flat.fontFamily?.startsWith('DMSerif');
+  // DM Sans is resolved per weight; any other family (the serif display face, monospace) is kept as given.
+  const keepsFamily = flat.fontFamily !== undefined && !flat.fontFamily.startsWith('DMSans');
   const weight = String(flat.fontWeight ?? '400');
-  const fontFamily = isSerif ? flat.fontFamily : (SANS_BY_WEIGHT[weight] ?? SANS_BY_WEIGHT['400']);
+  const fontFamily = keepsFamily ? flat.fontFamily : (SANS_BY_WEIGHT[weight] ?? SANS_BY_WEIGHT['400']);
 
   return <RNText {...props} style={[flat, { fontFamily, fontWeight: 'normal' }]} />;
 }

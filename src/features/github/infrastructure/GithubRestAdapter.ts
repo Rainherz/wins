@@ -68,6 +68,24 @@ const search = async (token: string, query: string) =>
   (await request<{ items: SearchItem[] }>(token, `/search/issues?q=${encodeURIComponent(query)}&per_page=100`)).items;
 
 export class GithubRestAdapter implements GithubPort {
+  async getReadme({ token }: GithubConnection, repo: string) {
+    const response = await fetch(`${API}/repos/${repo}/readme`, {
+      headers: {
+        // The raw media type returns the Markdown itself instead of a base64 JSON document.
+        Accept: 'application/vnd.github.raw+json',
+        Authorization: `Bearer ${token}`,
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    });
+
+    if (response.status === 404) return null;
+    if (response.status === 401) {
+      throw new InvalidGithubTokenError('GitHub rechazó el token. Revisa que sea válido y que no haya expirado.');
+    }
+    if (!response.ok) throw new Error('No se pudo leer el README del repositorio.');
+    return response.text();
+  }
+
   async listOpenWork({ token }: GithubConnection, repo: string) {
     // This endpoint returns issues and pull requests together; pull requests carry a `pull_request` key.
     const items = await request<IssueItem[]>(

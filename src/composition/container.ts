@@ -5,6 +5,7 @@ import { SupabaseDayClosureRepository } from '@/features/closeout/infrastructure
 import { createConnectGithub, createDisconnectGithub } from '@/features/github/application/connectGithub';
 import { createGetImportSuggestions } from '@/features/github/application/getImportSuggestions';
 import { createGetPendingWork } from '@/features/github/application/getPendingWork';
+import { createGetReadme } from '@/features/github/application/getReadme';
 import { createGetRepoSuggestions } from '@/features/github/application/getRepoSuggestions';
 import { createImportFromGithub } from '@/features/github/application/importFromGithub';
 import { createImportRepos } from '@/features/github/application/importRepos';
@@ -62,4 +63,5 @@ export const container = {
   getRepoSuggestions: createGetRepoSuggestions({ github, connections: githubConnections, projects }),
   importRepos: createImportRepos({ projects, createProject }),
   getPendingWork: createGetPendingWork({ github, connections: githubConnections }),
+  getReadme: createGetReadme({ github, connections: githubConnections }),
 };

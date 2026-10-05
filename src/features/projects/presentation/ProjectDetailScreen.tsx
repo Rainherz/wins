@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { container } from '@/composition/container';
 import { PendingWorkPanel } from '@/features/github/presentation/PendingWorkPanel';
+import { ReadmePanel } from '@/features/github/presentation/ReadmePanel';
 import { WinEditorSheets } from '@/features/wins/presentation/WinEditorSheets';
 import { WinRow } from '@/features/wins/presentation/WinRow';
 import type { Win } from '@/features/wins/domain/win';
@@ -138,6 +139,8 @@ export function ProjectDetailScreen() {
     )
   );
 
+  const about = project?.githubRepo ? <ReadmePanel key={`readme-${project.githubRepo}`} repo={project.githubRepo} /> : null;
+
   const timeline = detail && (
     <View style={styles.timeline}>
       <View style={styles.timelineHeader}>
@@ -265,11 +268,16 @@ export function ProjectDetailScreen() {
 
               {twoColumn ? (
                 <View style={styles.columns}>
-                  <View style={styles.sideColumn}>{pending}</View>
-                  <View style={styles.mainColumn}>{timeline}</View>
+                  {/* With a README, the wide column reads the project and the narrow one tracks it: pending, then history. */}
+                  <View style={styles.sideColumn}>
+                    {pending}
+                    {about ? timeline : null}
+                  </View>
+                  <View style={styles.mainColumn}>{about ?? timeline}</View>
                 </View>
               ) : (
                 <>
+                  {about}
                   {pending}
                   {timeline}
                 </>
@@ -351,7 +359,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   columns: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.xxl },
-  sideColumn: { width: 440 },
+  sideColumn: { width: 440, gap: spacing.xl },
   mainColumn: { flex: 1, minWidth: 0 },
   link: { borderRadius: radius.xl, padding: spacing.xl, gap: spacing.md, alignItems: 'flex-start' },
   linkIcon: { width: 44, height: 44, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center' },

@@ -11,6 +11,8 @@ export interface GithubPort {
   listRepos(connection: GithubConnection): Promise<GithubRepo[]>;
   /** Open issues and pull requests of `repo` ("owner/name"), most recently updated first. */
   listOpenWork(connection: GithubConnection, repo: string): Promise<GithubOpenItem[]>;
+  /** The README of `repo` as Markdown, or null when it has none. */
+  getReadme(connection: GithubConnection, repo: string): Promise<string | null>;
 }
 
 export interface GithubConnectionRepository {
