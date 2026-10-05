@@ -4,7 +4,9 @@ import { createCloseDay } from '@/features/closeout/application/closeDay';
 import { SupabaseDayClosureRepository } from '@/features/closeout/infrastructure/SupabaseDayClosureRepository';
 import { createConnectGithub, createDisconnectGithub } from '@/features/github/application/connectGithub';
 import { createGetImportSuggestions } from '@/features/github/application/getImportSuggestions';
+import { createGetRepoSuggestions } from '@/features/github/application/getRepoSuggestions';
 import { createImportFromGithub } from '@/features/github/application/importFromGithub';
+import { createImportRepos } from '@/features/github/application/importRepos';
 import { GithubRestAdapter } from '@/features/github/infrastructure/GithubRestAdapter';
 import { SupabaseGithubConnectionRepository } from '@/features/github/infrastructure/SupabaseGithubConnectionRepository';
 import { createCreateProject } from '@/features/projects/application/createProject';
@@ -44,4 +46,6 @@ export const container = {
   disconnectGithub: createDisconnectGithub(githubConnections),
   getImportSuggestions: createGetImportSuggestions({ github, connections: githubConnections, wins, projects }),
   importFromGithub: createImportFromGithub({ wins, projects, createProject }),
+  getRepoSuggestions: createGetRepoSuggestions({ github, connections: githubConnections, projects }),
+  importRepos: createImportRepos(createProject),
 };

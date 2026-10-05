@@ -11,6 +11,8 @@ type Props = {
   /** primary: the one main action. secondary: outlined. quiet: text only. */
   variant?: 'primary' | 'secondary' | 'quiet';
   icon?: IconName;
+  /** Put the icon after the label, for example a dropdown arrow. */
+  iconPosition?: 'start' | 'end';
   disabled?: boolean;
   /** Stretch to the full width of the container. */
   block?: boolean;
@@ -25,6 +27,7 @@ export function Button({
   onPress,
   variant = 'primary',
   icon,
+  iconPosition = 'start',
   disabled = false,
   block = false,
   align = 'center',
@@ -61,8 +64,9 @@ export function Button({
         disabled && { opacity: 0.4 },
       ]}>
       <View style={styles.content}>
-        {icon && <Icon name={icon} size={18} color={foreground} />}
+        {icon && iconPosition === 'start' && <Icon name={icon} size={18} color={foreground} />}
         <Text style={[type.bodySmall, { color: foreground, fontWeight: '600' }]}>{label}</Text>
+        {icon && iconPosition === 'end' && <Icon name={icon} size={18} color={foreground} />}
       </View>
     </Pressable>
   );

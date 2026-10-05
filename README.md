@@ -12,10 +12,10 @@ Las tareas terminadas desaparecen. Al final de la semana parece que nada avanzó
 
 | Pantalla | Qué hace |
 |----------|----------|
-| **Semana** | Total de logros y proyectos tocados, comparación con la semana pasada, una barra por día y cada logro agrupado por día con el ánimo de esa jornada. Marca un logro con la estrella para convertirlo en hito. |
+| **Semana** | Total de logros y proyectos tocados, comparación con la semana pasada, una barra por día y cada logro agrupado por día con el ánimo de esa jornada. Marca un logro con la estrella para convertirlo en hito. Con **Importar logros** traes tus PRs fusionados e issues cerrados de GitHub y eliges cuáles contar. |
 | **Agregar un logro** | Registra lo que terminaste en pocos segundos: texto, proyecto y, si quieres, hito. |
 | **Cerrar el día** | Elige cómo se sintió el día (bien, regular, difícil), revisa los logros de hoy y deja una nota opcional sobre lo que se trabó. |
-| **Proyectos** | Cada proyecto con sus logros de la semana, la última actividad y un gráfico de 7 días. Permite crear proyectos nuevos, cada uno con su propio color. |
+| **Proyectos** | Cada proyecto con sus logros de la semana, la última actividad y un gráfico de 7 días. Permite crear proyectos nuevos, cada uno con su propio color, o **importar tus repositorios de GitHub** como proyectos (ves cuáles están archivados, cuántos issues abiertos tienen y cuándo se movieron por última vez). |
 
 Además: tema claro por defecto con una alternativa oscura, diseño adaptable (barra inferior y hojas en celular; barra lateral y diálogos centrados en pantallas anchas) e inicio de sesión para un solo usuario.
 
@@ -97,6 +97,7 @@ Cambiar Supabase por otro backend implica escribir solo nuevos adaptadores. Más
 ## Notas
 
 - Las pruebas automáticas quedan fuera del alcance de esta primera versión. La separación hexagonal mantiene la lógica de dominio libre de React y Supabase, por lo que se pueden agregar pruebas unitarias más adelante sin refactorizar.
+- Un token *fine-grained* de GitHub solo alcanza los repositorios de **un** dueño (tu cuenta o una organización) y no cubre los que compartes como colaborador en la cuenta de otra persona. Si faltan repositorios al importar, la hoja muestra cuántos aporta cada dueño para que veas cuál falta.
 - Con pnpm 11, `expo install` falla. Agrega las dependencias con `pnpm add` usando las versiones que recomienda Expo.
 - La documentación técnica de `docs/` está en inglés.
 

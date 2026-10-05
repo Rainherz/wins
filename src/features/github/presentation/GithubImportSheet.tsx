@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { container } from '@/composition/container';
 import { formatShortDate } from '@/shared/lib/dates';
+import { messageOf } from '@/shared/lib/messageOf';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
 import { Button } from '@/shared/ui/Button';
@@ -10,8 +11,9 @@ import { Icon } from '@/shared/ui/Icon';
 import { Sheet } from '@/shared/ui/Sheet';
 import { SheetHeader } from '@/shared/ui/SheetHeader';
 import { Text } from '@/shared/ui/Text';
-import { TextField } from '@/shared/ui/TextField';
+import { InvalidGithubTokenError } from '../application/connectGithub';
 import { GithubNotConnectedError, type ImportSuggestion } from '../application/getImportSuggestions';
+import { GithubConnectPanel } from './GithubConnectPanel';
 
 type Props = {
   visible: boolean;
@@ -24,11 +26,9 @@ type Props = {
 
 type Phase =
   | { kind: 'loading' }
-  | { kind: 'connect' }
+  | { kind: 'connect'; notice?: string }
   | { kind: 'ready'; login: string; items: ImportSuggestion[] }
   | { kind: 'error'; message: string };
-
-const messageOf = (error: unknown) => (error instanceof Error ? error.message : 'Ocurrió un error inesperado.');
 
 async function fetchPhase(from: Date, to: Date): Promise<Phase> {
   try {
@@ -36,6 +36,7 @@ async function fetchPhase(from: Date, to: Date): Promise<Phase> {
     return { kind: 'ready', login, items: suggestions };
   } catch (error) {
     if (error instanceof GithubNotConnectedError) return { kind: 'connect' };
+    if (error instanceof InvalidGithubTokenError) return { kind: 'connect', notice: 'El token guardado ya no es válido (puede que lo hayas revocado o que haya expirado). Pega uno nuevo.' };
     return { kind: 'error', message: messageOf(error) };
   }
 }
@@ -52,7 +53,6 @@ function Form({ from, to, onClose, onImported }: Omit<Props, 'visible'>) {
   const { colors } = useTheme();
   const [phase, setPhase] = useState<Phase>({ kind: 'loading' });
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [token, setToken] = useState('');
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -76,20 +76,6 @@ function Form({ from, to, onClose, onImported }: Omit<Props, 'visible'>) {
   const reload = async () => {
     setPhase({ kind: 'loading' });
     apply(await fetchPhase(from, to));
-  };
-
-  const connect = async () => {
-    setBusy(true);
-    setActionError(null);
-    try {
-      await container.connectGithub(token);
-      setToken('');
-      await reload();
-    } catch (error) {
-      setActionError(messageOf(error));
-    } finally {
-      setBusy(false);
-    }
   };
 
   const disconnect = async () => {
@@ -132,7 +118,7 @@ function Form({ from, to, onClose, onImported }: Omit<Props, 'visible'>) {
 
   return (
     <View style={styles.form}>
-      <SheetHeader title="Importar de GitHub" description={description} onClose={onClose} />
+      <SheetHeader title="Importar logros de GitHub" description={description} onClose={onClose} />
 
       {phase.kind === 'loading' && <Text style={[type.body, { color: colors.textMuted }]}>Buscando en GitHub…</Text>}
 
@@ -145,46 +131,7 @@ function Form({ from, to, onClose, onImported }: Omit<Props, 'visible'>) {
         </>
       )}
 
-      {phase.kind === 'connect' && (
-        <>
-          <View style={[styles.steps, { backgroundColor: colors.surfaceMuted }]}>
-            <Text style={[type.bodySmall, { color: colors.text }]}>
-              1. En GitHub abre Settings → Developer settings → Personal access tokens → Fine-grained tokens.
-            </Text>
-            <Text style={[type.bodySmall, { color: colors.text }]}>
-              2. Elige los repositorios y da permiso de solo lectura a Issues y Pull requests.
-            </Text>
-            <Text style={[type.bodySmall, { color: colors.text }]}>3. Pega el token aquí.</Text>
-          </View>
-
-          <TextField
-            label="Token de GitHub"
-            icon="key-outline"
-            value={token}
-            onChangeText={setToken}
-            placeholder="github_pat_…"
-            secureTextEntry
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          <Text style={[type.caption, { color: colors.textMuted }]}>
-            El token se guarda en tu base de datos de Supabase, protegido por tu sesión.
-          </Text>
-
-          {actionError && (
-            <Text accessibilityRole="alert" style={[type.bodySmall, { color: colors.accentStrong }]}>
-              {actionError}
-            </Text>
-          )}
-          <Button
-            label={busy ? 'Conectando…' : 'Conectar'}
-            icon="github"
-            onPress={connect}
-            disabled={busy || token.trim() === ''}
-            block
-          />
-        </>
-      )}
+      {phase.kind === 'connect' && <GithubConnectPanel onConnected={reload} notice={phase.notice} />}
 
       {phase.kind === 'ready' && (
         <>
@@ -264,7 +211,6 @@ function Form({ from, to, onClose, onImported }: Omit<Props, 'visible'>) {
 
 const styles = StyleSheet.create({
   form: { gap: spacing.xl },
-  steps: { borderRadius: radius.md, padding: spacing.lg, gap: spacing.sm },
   emptyBox: { borderRadius: radius.lg, padding: spacing.xl, gap: spacing.sm, alignItems: 'flex-start' },
   list: { gap: spacing.sm },
   item: {

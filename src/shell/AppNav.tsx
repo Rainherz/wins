@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { container } from '@/composition/container';
 import { useAuth } from '@/features/auth/presentation/AuthProvider';
 import { useIsWide } from '@/shared/lib/useIsWide';
-import { radius, spacing, type } from '@/shared/theme/tokens';
+import { radius, SIDEBAR_WIDTH, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
 import { Button } from '@/shared/ui/Button';
 import { Icon, type IconName } from '@/shared/ui/Icon';
@@ -153,7 +153,7 @@ function BottomBar(props: BottomTabBarProps) {
 
 const styles = StyleSheet.create({
   sidebar: {
-    width: 264,
+    width: SIDEBAR_WIDTH,
     padding: spacing.xl,
     gap: spacing.xl,
     borderRightWidth: 1,
