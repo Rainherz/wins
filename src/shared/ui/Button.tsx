@@ -8,8 +8,8 @@ import { Text } from './Text';
 type Props = {
   label: string;
   onPress: () => void;
-  /** primary: the one main action. secondary: outlined. quiet: text only. */
-  variant?: 'primary' | 'secondary' | 'quiet';
+  /** primary: the one main action. secondary: outlined. quiet: text only. danger: destructive. */
+  variant?: 'primary' | 'secondary' | 'quiet' | 'danger';
   icon?: IconName;
   /** Put the icon after the label, for example a dropdown arrow. */
   iconPosition?: 'start' | 'end';
@@ -36,7 +36,13 @@ export function Button({
   const { colors } = useTheme();
 
   const foreground =
-    variant === 'primary' ? colors.onAccent : variant === 'secondary' ? colors.text : colors.textMuted;
+    variant === 'primary'
+      ? colors.onAccent
+      : variant === 'secondary'
+        ? colors.text
+        : variant === 'danger'
+          ? colors.danger
+          : colors.textMuted;
 
   return (
     <Pressable
@@ -60,6 +66,11 @@ export function Button({
           borderWidth: 1,
         },
         variant === 'quiet' && { backgroundColor: hovered ? colors.surfaceMuted : 'transparent' },
+        variant === 'danger' && {
+          backgroundColor: hovered ? colors.dangerSoft : colors.surface,
+          borderColor: colors.danger + '55',
+          borderWidth: 1,
+        },
         pressed && { transform: [{ scale: 0.98 }] },
         disabled && { opacity: 0.4 },
       ]}>

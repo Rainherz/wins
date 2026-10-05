@@ -38,6 +38,8 @@ Light is the default, dark is an alternative toggled by the user. Both are defin
 | `accentStrong`   | `#B9500F` | `#F29A57` | Text and links on the page background       |
 | `accentSoft`     | `#FCEBDC` | `#3A281B` | Highlight backgrounds (milestones, selection) |
 | `onAccent`       | `#1F1E1B` | `#1F1E1B` | Text and icons on `accent`                  |
+| `danger`         | `#B3261E` | `#F2A19B` | Destructive actions and errors              |
+| `dangerSoft`     | `#FCE8E6` | `#3B1F1D` | Error notice background                     |
 
 Contrast: white text on `accent` is about 2.5:1 and fails, so anything on `accent` uses
 `onAccent` (dark ink, about 6.6:1) and orange text on the page uses `accentStrong`.
@@ -99,6 +101,9 @@ glyphs or emoji as icons.
 | `IconButton`     | 44x44 target around any icon; hover and pressed states. |
 | `TextField`      | Label, optional leading icon and trailing control, focus ring in accent. |
 | `Sheet` / `SheetHeader` | Container and title row shared by every sheet. |
+| `ConfirmSheet` | Asks before a destructive action (`Alert.alert` does nothing on the web). Danger button, cancel next to it. |
+| `ErrorNotice` | An error the user can act on: what happened plus Retry or Dismiss. Used for failed loads and actions. |
+| `ChipSelect` / `Segmented` | Single choice. Chips wrap (days, projects); the segmented control stays on one line (filters). |
 | `WeekPulse`      | Total, project count, delta vs last week, and a 7-day strip with counts, bars and mood icons. Bars grow in once on load (the only authored motion). |
 | `DaySection`     | Day header (weekday, date, "Hoy", count, mood chip) plus the day's wins in one card with hairlines, or a calm empty state. |
 | `WinRow`         | Project dot, title, project, time, GitHub link when imported, milestone star. Milestone rows get the soft accent background and a filled star. |

@@ -1,27 +1,28 @@
-import { MAX_TITLE_LENGTH, type Win } from '../domain/win';
+import type { Win } from '../domain/win';
 import type { Clock, WinRepository } from './ports';
+import { assertNotFuture, normalizeTitle } from './winRules';
 
-export class InvalidWinError extends Error {}
+export { InvalidWinError } from './winRules';
 
 export type LogWinInput = {
   title: string;
   projectId: string;
   isMilestone: boolean;
+  /** When it happened. Defaults to now. */
+  achievedAt?: Date;
 };
 
 export const createLogWin =
   ({ wins, clock }: { wins: WinRepository; clock: Clock }) =>
   async (input: LogWinInput): Promise<Win> => {
-    const title = input.title.trim();
-    if (!title) throw new InvalidWinError('El título es obligatorio');
-    if (title.length > MAX_TITLE_LENGTH) {
-      throw new InvalidWinError(`El título admite como máximo ${MAX_TITLE_LENGTH} caracteres`);
-    }
+    const now = clock.now();
+    const achievedAt = input.achievedAt ?? now;
+    assertNotFuture(achievedAt, now);
 
     return wins.add({
       projectId: input.projectId,
-      title,
+      title: normalizeTitle(input.title),
       isMilestone: input.isMilestone,
-      achievedAt: clock.now(),
+      achievedAt,
     });
   };

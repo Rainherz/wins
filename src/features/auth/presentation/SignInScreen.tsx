@@ -78,7 +78,7 @@ export function SignInScreen() {
           />
         </View>
 
-        {error && (
+        {!!error && (
           <Text accessibilityRole="alert" style={[type.bodySmall, { color: colors.accentStrong }]}>
             {error}
           </Text>

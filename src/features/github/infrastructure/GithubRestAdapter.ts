@@ -65,7 +65,7 @@ export class GithubRestAdapter implements GithubPort {
           fullName: item.full_name,
           name: item.name,
           owner: item.owner.login,
-          description: item.description ?? undefined,
+          description: item.description || undefined,
           archived: item.archived,
           isPrivate: item.private,
           isFork: item.fork,

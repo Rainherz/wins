@@ -64,7 +64,7 @@ function Form({ onClose, onSave }: Omit<Props, 'visible'>) {
         placeholder="Plataforma del equipo"
       />
 
-      {error && (
+      {!!error && (
         <Text accessibilityRole="alert" style={[type.bodySmall, { color: colors.accentStrong }]}>
           {error}
         </Text>

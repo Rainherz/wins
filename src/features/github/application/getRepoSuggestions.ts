@@ -22,7 +22,7 @@ export const createGetRepoSuggestions =
     const connection = await connections.get();
     if (!connection) throw new GithubNotConnectedError();
 
-    const [repos, projectList] = await Promise.all([github.listRepos(connection), projects.list()]);
+    const [repos, projectList] = await Promise.all([github.listRepos(connection), projects.list({ includeArchived: true })]);
     const projectNames = new Set(projectList.map((project) => project.name.toLowerCase()));
 
     return {

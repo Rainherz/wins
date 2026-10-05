@@ -8,4 +8,6 @@ export type Project = {
   description: string;
   /** Index into the project palette. Fixed at creation. */
   colorSlot: number;
+  /** Set when the project is finished. Finished projects stay in the history. */
+  archivedAt?: Date;
 };

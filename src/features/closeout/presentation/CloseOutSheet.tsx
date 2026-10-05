@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import type { Project } from '@/features/projects/domain/project';
 import type { DaySummary } from '@/features/wins/application/getWeekSummary';
 import { formatShortDate, formatWeekday } from '@/shared/lib/dates';
+import { messageOf } from '@/shared/lib/messageOf';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
 import { Button } from '@/shared/ui/Button';
@@ -39,13 +40,20 @@ function Form({ today, projects, onClose, onAddWin, onSave }: Omit<Props, 'visib
   const [note, setNote] = useState(today.stuckNote ?? '');
   const [showNote, setShowNote] = useState(Boolean(today.stuckNote));
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const canSave = mood !== undefined && !saving;
 
   const save = async () => {
     if (!mood) return;
     setSaving(true);
-    await onSave({ mood, stuckNote: note });
+    setError(null);
+    try {
+      await onSave({ mood, stuckNote: note });
+    } catch (err) {
+      setError(messageOf(err));
+      setSaving(false);
+    }
   };
 
   return (
@@ -114,6 +122,12 @@ function Form({ today, projects, onClose, onAddWin, onSave }: Omit<Props, 'visib
         />
       ) : (
         <Button label="Agregar una nota sobre lo que se trabó" icon="note-text-outline" variant="quiet" onPress={() => setShowNote(true)} flush />
+      )}
+
+      {!!error && (
+        <Text accessibilityRole="alert" style={[type.bodySmall, { color: colors.danger }]}>
+          {error}
+        </Text>
       )}
 
       <Button label="Cerrar el día" icon="weather-night" onPress={save} disabled={!canSave} block />

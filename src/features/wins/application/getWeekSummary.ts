@@ -43,7 +43,7 @@ export const createGetWeekSummary =
     const [weekWins, previousTotal, projectList, weekClosures] = await Promise.all([
       wins.listByRange(weekStart, weekEnd),
       wins.countByRange(addDays(weekStart, -7), weekStart),
-      projects.list(),
+      projects.list({ includeArchived: true }),
       closures.listByRange(weekStart, weekEnd),
     ]);
 

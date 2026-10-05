@@ -19,7 +19,7 @@ export function SheetHeader({ title, description, onClose }: Props) {
     <View style={styles.row}>
       <View style={styles.text}>
         <Text style={[type.title, { color: colors.text }]}>{title}</Text>
-        {description && <Text style={[type.bodySmall, { color: colors.textMuted }]}>{description}</Text>}
+        {!!description && <Text style={[type.bodySmall, { color: colors.textMuted }]}>{description}</Text>}
       </View>
       <IconButton icon="close" accessibilityLabel="Cerrar" onPress={onClose} />
     </View>

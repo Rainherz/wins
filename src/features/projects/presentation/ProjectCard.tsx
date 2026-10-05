@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
@@ -15,14 +15,30 @@ function lastTouchedText(days?: number) {
   return `Activo hace ${days} días`;
 }
 
-export function ProjectCard({ overview }: { overview: ProjectOverview }) {
+type Props = {
+  overview: ProjectOverview;
+  onPress: () => void;
+};
+
+export function ProjectCard({ overview, onPress }: Props) {
   const { colors } = useTheme();
-  const { project, winsThisWeek, last7Days, daysSinceTouched } = overview;
+  const { project, winsThisWeek, last7Days, daysSinceTouched, archived } = overview;
   const color = colors.projects[project.colorSlot];
   const max = Math.max(1, ...last7Days);
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.surface, boxShadow: colors.shadowCard }]}>
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`Editar proyecto ${project.name}`}
+      style={({ hovered }) => [
+        styles.card,
+        {
+          backgroundColor: hovered ? colors.surfaceMuted : colors.surface,
+          boxShadow: colors.shadowCard,
+          opacity: archived ? 0.75 : 1,
+        },
+      ]}>
       <View style={[styles.avatar, { backgroundColor: color }]}>
         <Text style={[type.bodySmall, { color: colors.onAccent, fontWeight: '700' }]}>
           {project.name.slice(0, 2).toUpperCase()}
@@ -39,8 +55,10 @@ export function ProjectCard({ overview }: { overview: ProjectOverview }) {
           </Text>
         )}
         <View style={styles.touched}>
-          <Icon name="clock-outline" size={14} color={colors.textMuted} />
-          <Text style={[type.caption, { color: colors.textMuted }]}>{lastTouchedText(daysSinceTouched)}</Text>
+          <Icon name={archived ? 'check-circle-outline' : 'clock-outline'} size={14} color={colors.textMuted} />
+          <Text style={[type.caption, { color: colors.textMuted }]}>
+            {archived ? 'Finalizado' : lastTouchedText(daysSinceTouched)}
+          </Text>
         </View>
       </View>
 
@@ -62,7 +80,7 @@ export function ProjectCard({ overview }: { overview: ProjectOverview }) {
           ))}
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

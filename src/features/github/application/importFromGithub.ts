@@ -14,7 +14,7 @@ type Deps = {
 export const createImportFromGithub =
   ({ wins, projects, createProject }: Deps) =>
   async (selected: ImportSuggestion[]): Promise<number> => {
-    const byName = new Map((await projects.list()).map((project) => [project.name.toLowerCase(), project]));
+    const byName = new Map((await projects.list({ includeArchived: true })).map((project) => [project.name.toLowerCase(), project]));
 
     // Sequential on purpose: each new project picks the next free color.
     for (const item of selected) {

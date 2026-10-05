@@ -17,6 +17,9 @@ export type Colors = {
   accentSoft: string;
   /** Text and icons placed on top of `accent`. */
   onAccent: string;
+  /** Destructive actions and errors. */
+  danger: string;
+  dangerSoft: string;
   projects: readonly string[];
   mood: { good: string; soSo: string; tough: string };
   shadowCard: string;
@@ -36,6 +39,8 @@ export const colors: Record<Scheme, Colors> = {
     accentStrong: '#B9500F',
     accentSoft: '#FCEBDC',
     onAccent: '#1F1E1B',
+    danger: '#B3261E',
+    dangerSoft: '#FCE8E6',
     projects: ['#6F96BD', '#A084C4', '#7BA383', '#C99A5B', '#C47F8F'],
     mood: { good: '#4F8A63', soSo: '#8C7A3B', tough: '#9A6B66' },
     shadowCard: '0 1px 2px rgba(60, 40, 20, 0.05), 0 6px 20px rgba(60, 40, 20, 0.05)',
@@ -53,6 +58,8 @@ export const colors: Record<Scheme, Colors> = {
     accentStrong: '#F29A57',
     accentSoft: '#3A281B',
     onAccent: '#1F1E1B',
+    danger: '#F2A19B',
+    dangerSoft: '#3B1F1D',
     projects: ['#86ABD0', '#B59BD4', '#92B99A', '#D8AE72', '#D597A5'],
     mood: { good: '#86B396', soSo: '#C1AE78', tough: '#B7938E' },
     shadowCard: '0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.25)',

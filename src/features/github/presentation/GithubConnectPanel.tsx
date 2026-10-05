@@ -40,7 +40,7 @@ export function GithubConnectPanel({ onConnected, notice }: Props) {
 
   return (
     <>
-      {notice && (
+      {!!notice && (
         <View style={[styles.notice, { backgroundColor: colors.accentSoft }]} accessibilityRole="alert">
           <Icon name="alert-circle-outline" size={20} color={colors.accentStrong} />
           <Text style={[type.bodySmall, styles.noticeText, { color: colors.text }]}>{notice}</Text>
@@ -71,7 +71,7 @@ export function GithubConnectPanel({ onConnected, notice }: Props) {
         El token se guarda en tu base de datos de Supabase, protegido por tu sesión.
       </Text>
 
-      {error && (
+      {!!error && (
         <Text accessibilityRole="alert" style={[type.bodySmall, { color: colors.accentStrong }]}>
           {error}
         </Text>

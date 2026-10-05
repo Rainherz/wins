@@ -11,7 +11,7 @@ import { AuthProvider, useAuth } from '@/features/auth/presentation/AuthProvider
 import { ThemeProvider, useTheme } from '@/shared/theme/ThemeProvider';
 
 function Navigator() {
-  const { scheme, colors } = useTheme();
+  const { scheme, colors, ready } = useTheme();
   const auth = useAuth();
   const [fontsLoaded] = useFonts({
     DMSans_400Regular,
@@ -21,7 +21,7 @@ function Navigator() {
     DMSerifDisplay_400Regular,
   });
 
-  if (auth.status === 'loading' || !fontsLoaded) {
+  if (auth.status === 'loading' || !fontsLoaded || !ready) {
     return <View style={{ flex: 1, backgroundColor: colors.bg }} />;
   }
 

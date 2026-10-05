@@ -20,7 +20,7 @@ export function TextField({ label, icon, trailing, multiline, style, ...input }:
 
   return (
     <View style={styles.wrap}>
-      {label && <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>{label}</Text>}
+      {!!label && <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>{label}</Text>}
       <View
         style={[
           styles.field,

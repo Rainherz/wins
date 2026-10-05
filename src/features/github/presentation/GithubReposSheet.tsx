@@ -311,7 +311,7 @@ function Form({ onClose, onImported }: Omit<Props, 'visible'>) {
                         />
                         <View style={styles.itemBody}>
                           <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>{repo.fullName}</Text>
-                          {repo.description && (
+                          {!!repo.description && (
                             <Text style={[type.caption, { color: colors.textMuted }]} numberOfLines={1}>
                               {repo.description}
                             </Text>
@@ -343,7 +343,7 @@ function Form({ onClose, onImported }: Omit<Props, 'visible'>) {
                 otro dueño necesitas otro token.
               </Text>
 
-              {actionError && (
+              {!!actionError && (
                 <Text accessibilityRole="alert" style={[type.bodySmall, { color: colors.accentStrong }]}>
                   {actionError}
                 </Text>

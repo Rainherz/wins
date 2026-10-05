@@ -1,4 +1,4 @@
-const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+export const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
 export const addDays = (date: Date, days: number) => {
   const result = startOfDay(date);
@@ -39,3 +39,31 @@ export const daysAgo = (date: Date, now: Date) =>
 
 export const formatTime = (date: Date) =>
   date.toLocaleTimeString('es', { hour: 'numeric', minute: '2-digit' });
+
+/** The last `count` days ending at `now`, newest first. */
+export const lastDays = (now: Date, count: number) => Array.from({ length: count }, (_, index) => addDays(now, -index));
+
+/** The calendar day `day` at the same clock time as `source`. */
+export const atTimeOf = (day: Date, source: Date) => {
+  const result = startOfDay(day);
+  result.setHours(source.getHours(), source.getMinutes(), source.getSeconds(), 0);
+  return result;
+};
+
+export const atNoon = (day: Date) => {
+  const result = startOfDay(day);
+  result.setHours(12, 0, 0, 0);
+  return result;
+};
+
+/** "Hoy", "Ayer" or a short weekday with the day number, for day pickers. */
+export const formatDayChip = (day: Date, now: Date) => {
+  const diff = Math.round((startOfDay(now).getTime() - startOfDay(day).getTime()) / 86_400_000);
+  if (diff === 0) return 'Hoy';
+  if (diff === 1) return 'Ayer';
+  return `${day.toLocaleDateString('es', { weekday: 'short' })} ${day.getDate()}`;
+};
+
+/** Whole weeks between the week of `date` and the week of `now` (negative for the past). */
+export const weekOffsetOf = (date: Date, now: Date) =>
+  Math.round((startOfWeek(date).getTime() - startOfWeek(now).getTime()) / (7 * 86_400_000));

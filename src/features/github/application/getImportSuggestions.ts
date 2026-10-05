@@ -27,7 +27,7 @@ export const createGetImportSuggestions =
     const [work, importedIds, projectList] = await Promise.all([
       github.listDoneWork(connection, from),
       wins.listExternalIds(),
-      projects.list(),
+      projects.list({ includeArchived: true }),
     ]);
 
     const imported = new Set(importedIds);

@@ -7,16 +7,21 @@ import { container } from '@/composition/container';
 import type { CloseDayInput } from '@/features/closeout/application/closeDay';
 import { CloseOutSheet } from '@/features/closeout/presentation/CloseOutSheet';
 import { GithubImportSheet } from '@/features/github/presentation/GithubImportSheet';
-import { addDays, formatWeekRange } from '@/shared/lib/dates';
+import { addDays, formatWeekRange, weekOffsetOf } from '@/shared/lib/dates';
+import { messageOf } from '@/shared/lib/messageOf';
 import { useIsTwoColumn, useIsWide } from '@/shared/lib/useIsWide';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
 import { Button } from '@/shared/ui/Button';
+import { ConfirmSheet } from '@/shared/ui/ConfirmSheet';
+import { ErrorNotice } from '@/shared/ui/ErrorNotice';
 import { IconButton } from '@/shared/ui/IconButton';
 import { Text } from '@/shared/ui/Text';
 import { useCapture } from '@/shell/CaptureProvider';
 import type { WeekSummary } from '../application/getWeekSummary';
+import type { Win } from '../domain/win';
 import { DaySection } from './DaySection';
+import { WinFormSheet, type WinFormValues } from './WinFormSheet';
 import { WeekPulse } from './WeekPulse';
 
 const WEEKDAY_LETTERS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
@@ -26,36 +31,75 @@ export function WeekScreen() {
   const { colors, scheme, toggle } = useTheme();
   const isWide = useIsWide();
   const twoColumn = useIsTwoColumn();
-  const { openAddWin, revision } = useCapture();
+  const { openAddWin, revision, savedWeekOffset } = useCapture();
 
-  // A saved win always belongs to the current week, so a newer revision resets the selection.
+  // After saving a win, show the week it landed in. Until the user navigates again, that wins over their selection.
   const [selection, setSelection] = useState({ offset: 0, revision });
-  const weekOffset = selection.revision === revision ? selection.offset : 0;
+  const weekOffset = selection.revision === revision ? selection.offset : savedWeekOffset;
   const goTo = (offset: number) => setSelection({ offset, revision });
 
   const [summary, setSummary] = useState<WeekSummary | null>(null);
   const [closing, setClosing] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [editing, setEditing] = useState<Win | null>(null);
+  const [deleting, setDeleting] = useState<Win | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   // Tabs stay mounted, so reload on focus and whenever a win is saved elsewhere.
   useFocusEffect(
     useCallback(() => {
       void revision; // a saved win elsewhere changes this value and triggers a reload
       let cancelled = false;
-      container.getWeekSummary(weekOffset).then((result) => {
-        if (!cancelled) setSummary(result);
-      });
+      container
+        .getWeekSummary(weekOffset)
+        .then((result) => {
+          if (cancelled) return;
+          setSummary(result);
+          setLoadError(null);
+        })
+        .catch((error) => {
+          if (!cancelled) setLoadError(messageOf(error));
+        });
       return () => {
         cancelled = true;
       };
     }, [weekOffset, revision]),
   );
 
-  const reload = async () => setSummary(await container.getWeekSummary(weekOffset));
+  const reload = async () => {
+    try {
+      setSummary(await container.getWeekSummary(weekOffset));
+      setLoadError(null);
+    } catch (error) {
+      setLoadError(messageOf(error));
+    }
+  };
 
   const onToggleMilestone = async (id: string, next: boolean) => {
-    await container.toggleMilestone(id, next);
+    try {
+      await container.toggleMilestone(id, next);
+      await reload();
+    } catch (error) {
+      setNotice(messageOf(error));
+    }
+  };
+
+  const onSaveEdit = async (values: WinFormValues) => {
+    if (!editing) return;
+    await container.updateWin({ id: editing.id, ...values });
+    setEditing(null);
+    // If the day changed to another week, follow the win there.
+    const target = weekOffsetOf(values.achievedAt ?? editing.achievedAt, new Date());
+    if (target === weekOffset) await reload();
+    else goTo(target);
+  };
+
+  const onConfirmDelete = async () => {
+    if (!deleting) return;
+    await container.deleteWin(deleting.id);
     await reload();
+    setDeleting(null);
   };
 
   const onCloseDay = async (input: CloseDayInput) => {
@@ -110,6 +154,7 @@ export function WeekScreen() {
           projects={summary.projects}
           onToggleMilestone={onToggleMilestone}
           onAddWin={openAddWin}
+          onEdit={setEditing}
         />
       ))}
 
@@ -156,6 +201,9 @@ export function WeekScreen() {
             </View>
           </View>
 
+          {!!loadError && <ErrorNotice message={loadError} onRetry={reload} />}
+          {!!notice && <ErrorNotice message={notice} onDismiss={() => setNotice(null)} />}
+
           {summary &&
             (twoColumn ? (
               <View style={styles.columns}>
@@ -175,6 +223,29 @@ export function WeekScreen() {
         </View>
       </ScrollView>
 
+      <WinFormSheet
+        visible={editing !== null}
+        win={editing ?? undefined}
+        projects={
+          editing && summary
+            ? Object.values(summary.projects).filter((project) => !project.archivedAt || project.id === editing.projectId)
+            : []
+        }
+        onClose={() => setEditing(null)}
+        onSave={onSaveEdit}
+        onDelete={() => {
+          setDeleting(editing);
+          setEditing(null);
+        }}
+      />
+      <ConfirmSheet
+        visible={deleting !== null}
+        title="¿Eliminar este logro?"
+        description={deleting ? `«${deleting.title}» se eliminará para siempre.` : ''}
+        confirmLabel="Eliminar logro"
+        onConfirm={onConfirmDelete}
+        onClose={() => setDeleting(null)}
+      />
       <CloseOutSheet
         visible={closing}
         today={today}

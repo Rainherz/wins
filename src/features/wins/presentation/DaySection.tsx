@@ -6,6 +6,7 @@ import { useTheme } from '@/shared/theme/ThemeProvider';
 import { Button } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import type { DaySummary } from '../application/getWeekSummary';
+import type { Win } from '../domain/win';
 import { DayHeader } from './DayHeader';
 import { WinRow } from './WinRow';
 
@@ -14,9 +15,10 @@ type Props = {
   projects: Record<string, Project>;
   onToggleMilestone: (id: string, next: boolean) => void;
   onAddWin: () => void;
+  onEdit: (win: Win) => void;
 };
 
-export function DaySection({ day, projects, onToggleMilestone, onAddWin }: Props) {
+export function DaySection({ day, projects, onToggleMilestone, onAddWin, onEdit }: Props) {
   const { colors } = useTheme();
 
   return (
@@ -31,6 +33,7 @@ export function DaySection({ day, projects, onToggleMilestone, onAddWin }: Props
                 win={win}
                 project={projects[win.projectId]}
                 onToggleMilestone={() => onToggleMilestone(win.id, !win.isMilestone)}
+                onEdit={() => onEdit(win)}
               />
             </View>
           ))}

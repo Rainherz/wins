@@ -1,10 +1,15 @@
 import type { Win } from '../domain/win';
 
 export type NewWin = Omit<Win, 'id'>;
+export type WinPatch = Partial<Pick<Win, 'title' | 'projectId' | 'isMilestone' | 'achievedAt'>>;
 
 export interface WinRepository {
   /** Persists the win and returns it with its generated id. */
   add(win: NewWin): Promise<Win>;
+  update(id: string, patch: WinPatch): Promise<void>;
+  remove(id: string): Promise<void>;
+  /** Deletes every win of a project and returns how many were removed. */
+  removeByProject(projectId: string): Promise<number>;
   listAll(): Promise<Win[]>;
   /** Wins achieved in [from, to). */
   listByRange(from: Date, to: Date): Promise<Win[]>;

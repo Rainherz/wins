@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import type { NewWin, WinRepository } from '../application/ports';
+import type { NewWin, WinPatch, WinRepository } from '../application/ports';
 import type { Win } from '../domain/win';
 
 type WinRow = {
@@ -73,6 +73,35 @@ export class SupabaseWinRepository implements WinRepository {
       .lt('achieved_at', to.toISOString());
     if (error) throw new Error(error.message);
     return count ?? 0;
+  }
+
+  async update(id: string, patch: WinPatch) {
+    const { error } = await this.client
+      .from('wins')
+      .update({
+        ...(patch.title !== undefined && { title: patch.title }),
+        ...(patch.projectId !== undefined && { project_id: patch.projectId }),
+        ...(patch.isMilestone !== undefined && { is_milestone: patch.isMilestone }),
+        ...(patch.achievedAt !== undefined && { achieved_at: patch.achievedAt.toISOString() }),
+      })
+      .eq('id', id);
+    if (error) throw new Error(error.message);
+  }
+
+  async remove(id: string) {
+    const { error } = await this.client.from('wins').delete().eq('id', id);
+    if (error) throw new Error(error.message);
+  }
+
+  async removeByProject(projectId: string) {
+    const { data, error } = await this.client
+      .from('wins')
+      .delete()
+      .eq('project_id', projectId)
+      .select('id')
+      .returns<{ id: string }[]>();
+    if (error) throw new Error(error.message);
+    return data.length;
   }
 
   async setMilestone(id: string, isMilestone: boolean) {

@@ -182,7 +182,7 @@ function Form({ from, to, onClose, onImported }: Omit<Props, 'visible'>) {
             </View>
           )}
 
-          {actionError && (
+          {!!actionError && (
             <Text accessibilityRole="alert" style={[type.bodySmall, { color: colors.accentStrong }]}>
               {actionError}
             </Text>
