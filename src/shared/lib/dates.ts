@@ -20,10 +20,13 @@ export const dayKey = (date: Date) => {
 
 export const isSameDay = (a: Date, b: Date) => dayKey(a) === dayKey(b);
 
-export const formatWeekday = (date: Date) => date.toLocaleDateString('en-US', { weekday: 'long' });
+export const formatWeekday = (date: Date) => {
+  const name = date.toLocaleDateString('es', { weekday: 'long' });
+  return name.charAt(0).toUpperCase() + name.slice(1);
+};
 
 export const formatShortDate = (date: Date) =>
-  date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  date.toLocaleDateString('es', { month: 'short', day: 'numeric' });
 
 export const formatWeekRange = (start: Date) => {
   const end = addDays(start, 6);

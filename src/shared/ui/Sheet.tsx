@@ -32,7 +32,7 @@ export function Sheet({ visible, onClose, children }: Props) {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={[styles.overlay, isDesktop ? styles.overlayCenter : styles.overlayBottom]}>
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel="Close" />
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel="Cerrar" />
         <View
           style={[
             styles.sheet,

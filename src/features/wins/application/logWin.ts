@@ -13,9 +13,9 @@ export const createLogWin =
   ({ wins, clock }: { wins: WinRepository; clock: Clock }) =>
   async (input: LogWinInput): Promise<Win> => {
     const title = input.title.trim();
-    if (!title) throw new InvalidWinError('Title is required');
+    if (!title) throw new InvalidWinError('El título es obligatorio');
     if (title.length > MAX_TITLE_LENGTH) {
-      throw new InvalidWinError(`Title must be at most ${MAX_TITLE_LENGTH} characters`);
+      throw new InvalidWinError(`El título admite como máximo ${MAX_TITLE_LENGTH} caracteres`);
     }
 
     return wins.add({

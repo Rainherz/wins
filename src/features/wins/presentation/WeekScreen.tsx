@@ -18,7 +18,7 @@ import { DayHeader } from './DayHeader';
 import { MomentumCard } from './MomentumCard';
 import { WinRow } from './WinRow';
 
-const WEEKDAY_LETTERS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const WEEKDAY_LETTERS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 
 export function WeekScreen() {
   const { colors, scheme, toggle } = useTheme();
@@ -71,15 +71,15 @@ export function WeekScreen() {
                 {summary ? formatWeekRange(summary.weekStart).toUpperCase() : ' '}
               </Text>
               <Text style={[type.display, styles.title, { color: colors.text }]}>
-                {weekOffset === 0 ? 'This week' : weekOffset === -1 ? 'Last week' : 'Week'}
+                {weekOffset === 0 ? 'Esta semana' : weekOffset === -1 ? 'Semana pasada' : 'Semana'}
               </Text>
             </View>
             <View style={styles.controls}>
-              <HeaderButton label="‹" accessibilityLabel="Previous week" onPress={() => setWeekOffset((o) => o - 1)} />
-              <HeaderButton label="›" accessibilityLabel="Next week" onPress={() => setWeekOffset((o) => Math.min(0, o + 1))} />
+              <HeaderButton label="‹" accessibilityLabel="Semana anterior" onPress={() => setWeekOffset((o) => o - 1)} />
+              <HeaderButton label="›" accessibilityLabel="Semana siguiente" onPress={() => setWeekOffset((o) => Math.min(0, o + 1))} />
               <HeaderButton
                 label={scheme === 'light' ? '☾' : '☀'}
-                accessibilityLabel="Toggle theme"
+                accessibilityLabel="Cambiar tema"
                 onPress={toggle}
               />
             </View>
@@ -99,11 +99,11 @@ export function WeekScreen() {
               />
 
               <View style={styles.sectionHeader}>
-                <Text style={[type.title, { color: colors.text }]}>What moved forward</Text>
+                <Text style={[type.title, { color: colors.text }]}>Lo que avanzó</Text>
                 {today && (
                   <Pressable onPress={() => setClosing(true)} accessibilityRole="button" style={styles.closeLink}>
                     <Text style={[type.bodySmall, { color: colors.accentStrong, fontWeight: '600' }]}>
-                      Close out today →
+                      Cerrar el día →
                     </Text>
                   </Pressable>
                 )}
@@ -115,7 +115,7 @@ export function WeekScreen() {
                   {day.wins.length === 0 ? (
                     <View style={[styles.empty, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                       <Text style={[type.bodySmall, { color: colors.textMuted }]}>
-                        {day.isFuture ? 'Nothing here yet.' : 'Nothing logged. That is completely okay.'}
+                        {day.isFuture ? 'Aún no hay nada.' : 'Nada registrado. Está totalmente bien.'}
                       </Text>
                     </View>
                   ) : (
@@ -135,7 +135,7 @@ export function WeekScreen() {
         </View>
       </ScrollView>
 
-      <Fab onPress={() => setAdding(true)} accessibilityLabel="Add a win" />
+      <Fab onPress={() => setAdding(true)} accessibilityLabel="Agregar un logro" />
       <CloseOutSheet
         visible={closing}
         today={today}

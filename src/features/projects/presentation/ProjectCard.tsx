@@ -7,10 +7,10 @@ import type { ProjectOverview } from '../application/getProjectsOverview';
 const BAR_AREA = 28;
 
 function lastTouchedText(days?: number) {
-  if (days === undefined) return 'no wins yet';
-  if (days === 0) return 'last touched today';
-  if (days === 1) return 'last touched yesterday';
-  return `last touched ${days} days ago`;
+  if (days === undefined) return 'sin logros aún';
+  if (days === 0) return 'última actividad hoy';
+  if (days === 1) return 'última actividad ayer';
+  return `última actividad hace ${days} días`;
 }
 
 export function ProjectCard({ overview }: { overview: ProjectOverview }) {
@@ -41,8 +41,8 @@ export function ProjectCard({ overview }: { overview: ProjectOverview }) {
 
       <View style={styles.stats}>
         <Text style={[type.stat, { color: colors.text }]}>{winsThisWeek}</Text>
-        <Text style={[type.bodySmall, { color: colors.textMuted }]}>wins this week</Text>
-        <View style={styles.bars} accessibilityLabel="Wins in the last 7 days">
+        <Text style={[type.bodySmall, { color: colors.textMuted }]}>logros esta semana</Text>
+        <View style={styles.bars} accessibilityLabel="Logros de los últimos 7 días">
           {last7Days.map((count, index) => (
             <View
               key={index}

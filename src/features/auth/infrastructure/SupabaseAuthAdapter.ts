@@ -14,7 +14,7 @@ export class SupabaseAuthAdapter implements AuthPort {
     if (!error) return;
     // Supabase answers 400 "Invalid login credentials" for both unknown email and wrong password.
     throw new Error(
-      error.status === 400 ? 'Invalid email or password.' : 'Could not sign in. Try again in a moment.',
+      error.status === 400 ? 'Correo o contraseña incorrectos.' : 'No se pudo iniciar sesión. Inténtalo de nuevo en un momento.',
     );
   }
 

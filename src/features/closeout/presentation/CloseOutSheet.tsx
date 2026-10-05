@@ -50,10 +50,10 @@ function Form({ today, projects, onClose, onAddWin, onSave }: Omit<Props, 'visib
           <Text style={[type.label, { color: colors.textMuted }]}>
             {`${formatWeekday(today.date)}, ${formatShortDate(today.date)}`.toUpperCase()}
           </Text>
-          <Text style={[type.title, { color: colors.text }]}>How was today?</Text>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>No right answer. Just notice how it felt.</Text>
+          <Text style={[type.title, { color: colors.text }]}>¿Cómo fue hoy?</Text>
+          <Text style={[type.bodySmall, { color: colors.textMuted }]}>No hay respuesta correcta. Solo observa cómo se sintió.</Text>
         </View>
-        <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close" style={styles.close}>
+        <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Cerrar" style={styles.close}>
           <Text style={{ fontSize: 22, color: colors.textMuted }}>×</Text>
         </Pressable>
       </View>
@@ -84,11 +84,11 @@ function Form({ today, projects, onClose, onAddWin, onSave }: Omit<Props, 'visib
 
       <View style={[styles.wins, { backgroundColor: colors.surfaceMuted }]}>
         <View style={styles.winsHeader}>
-          <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>Today&apos;s wins</Text>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>{today.wins.length} logged</Text>
+          <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>Logros de hoy</Text>
+          <Text style={[type.bodySmall, { color: colors.textMuted }]}>{today.wins.length} {today.wins.length === 1 ? 'registrado' : 'registrados'}</Text>
         </View>
         {today.wins.length === 0 && (
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>Nothing logged yet. That is okay.</Text>
+          <Text style={[type.bodySmall, { color: colors.textMuted }]}>Aún no hay nada registrado. Está bien.</Text>
         )}
         {today.wins.map((win) => {
           const project = projects[win.projectId];
@@ -105,17 +105,17 @@ function Form({ today, projects, onClose, onAddWin, onSave }: Omit<Props, 'visib
           );
         })}
         <Pressable onPress={onAddWin} accessibilityRole="button" style={styles.link}>
-          <Text style={[type.bodySmall, { color: colors.accentStrong, fontWeight: '600' }]}>+ Add another win</Text>
+          <Text style={[type.bodySmall, { color: colors.accentStrong, fontWeight: '600' }]}>+ Agregar otro logro</Text>
         </Pressable>
       </View>
 
       {showNote ? (
         <View style={styles.field}>
-          <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>What got stuck?</Text>
+          <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>¿Qué se trabó?</Text>
           <TextInput
             value={note}
             onChangeText={setNote}
-            placeholder="Name it, so tomorrow starts clean…"
+            placeholder="Escríbelo, así mañana empiezas de cero…"
             placeholderTextColor={colors.textMuted}
             multiline
             style={[
@@ -127,7 +127,7 @@ function Form({ today, projects, onClose, onAddWin, onSave }: Omit<Props, 'visib
         </View>
       ) : (
         <Pressable onPress={() => setShowNote(true)} accessibilityRole="button" style={styles.link}>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>+ Add an optional note about what got stuck</Text>
+          <Text style={[type.bodySmall, { color: colors.textMuted }]}>+ Agregar una nota opcional sobre lo que se trabó</Text>
         </Pressable>
       )}
 
@@ -137,7 +137,7 @@ function Form({ today, projects, onClose, onAddWin, onSave }: Omit<Props, 'visib
         accessibilityRole="button"
         accessibilityState={{ disabled: !canSave }}
         style={[styles.save, { backgroundColor: colors.accent, opacity: canSave ? 1 : 0.4 }]}>
-        <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>Close the day</Text>
+        <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>Cerrar el día</Text>
       </Pressable>
     </View>
   );

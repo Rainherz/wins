@@ -21,14 +21,14 @@ export const createCreateProject =
   (projects: ProjectRepository) =>
   async (input: CreateProjectInput): Promise<Project> => {
     const name = input.name.trim();
-    if (!name) throw new InvalidProjectError('Name is required');
+    if (!name) throw new InvalidProjectError('El nombre es obligatorio');
     if (name.length > MAX_PROJECT_NAME_LENGTH) {
-      throw new InvalidProjectError(`Name must be at most ${MAX_PROJECT_NAME_LENGTH} characters`);
+      throw new InvalidProjectError(`El nombre admite como máximo ${MAX_PROJECT_NAME_LENGTH} caracteres`);
     }
 
     const existing = await projects.list();
     if (existing.some((project) => project.name.toLowerCase() === name.toLowerCase())) {
-      throw new InvalidProjectError('A project with that name already exists');
+      throw new InvalidProjectError('Ya existe un proyecto con ese nombre');
     }
 
     return projects.add({

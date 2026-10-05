@@ -16,9 +16,9 @@ const BAR_AREA = 72;
 
 function deltaText(total: number, previousTotal: number) {
   const diff = total - previousTotal;
-  if (diff > 0) return `That's ${diff} more than last week.`;
-  if (diff < 0) return `${Math.abs(diff)} fewer than last week. Every week is different.`;
-  return 'Same as last week.';
+  if (diff > 0) return `${diff} más que la semana pasada.`;
+  if (diff < 0) return `${Math.abs(diff)} menos que la semana pasada. Cada semana es distinta.`;
+  return 'Igual que la semana pasada.';
 }
 
 export function MomentumCard({ total, projectCount, previousTotal, bars }: Props) {
@@ -27,12 +27,12 @@ export function MomentumCard({ total, projectCount, previousTotal, bars }: Props
 
   return (
     <View style={[styles.card, { backgroundColor: colors.accentSoft, borderColor: colors.border }]}>
-      <Text style={[type.label, { color: colors.textMuted }]}>YOUR MOMENTUM</Text>
+      <Text style={[type.label, { color: colors.textMuted }]}>TU IMPULSO</Text>
       <Text style={[type.stat, { color: colors.text }]}>
-        {total} {total === 1 ? 'win' : 'wins'}
+        {total} {total === 1 ? 'logro' : 'logros'}
         <Text style={[type.body, { color: colors.textMuted }]}>
           {' '}
-          across {projectCount} {projectCount === 1 ? 'project' : 'projects'}
+          en {projectCount} {projectCount === 1 ? 'proyecto' : 'proyectos'}
         </Text>
       </Text>
       <Text style={[type.bodySmall, { color: colors.textMuted }]}>{deltaText(total, previousTotal)}</Text>

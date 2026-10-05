@@ -26,11 +26,11 @@ export function WinRow({ win, project, onToggleMilestone }: Props) {
       <View style={styles.body}>
         <Text style={[type.body, { color: colors.text }]}>{win.title}</Text>
         <View style={styles.meta}>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>{project?.name ?? 'No project'}</Text>
+          <Text style={[type.bodySmall, { color: colors.textMuted }]}>{project?.name ?? 'Sin proyecto'}</Text>
           {win.isMilestone && (
             <View style={[styles.chip, { backgroundColor: colors.accent }]}>
               <Text style={[type.label, { color: colors.onAccent }]}>
-                MILESTONE
+                HITO
               </Text>
             </View>
           )}
@@ -40,7 +40,7 @@ export function WinRow({ win, project, onToggleMilestone }: Props) {
         onPress={onToggleMilestone}
         hitSlop={12}
         accessibilityRole="button"
-        accessibilityLabel={win.isMilestone ? 'Remove milestone' : 'Mark as milestone'}
+        accessibilityLabel={win.isMilestone ? 'Quitar hito' : 'Marcar como hito'}
         style={styles.star}>
         <Text style={{ fontSize: 22, color: win.isMilestone ? colors.accent : colors.textMuted }}>
           {win.isMilestone ? '★' : '☆'}

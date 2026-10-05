@@ -42,12 +42,12 @@ export function ProjectsScreen() {
         <View style={styles.content}>
           <View style={styles.header}>
             <View style={styles.titleBlock}>
-              <Text style={[type.label, { color: colors.textMuted }]}>YOUR WORK, IN CONTEXT</Text>
-              <Text style={[type.display, styles.title, { color: colors.text }]}>Projects</Text>
+              <Text style={[type.label, { color: colors.textMuted }]}>TU TRABAJO, EN CONTEXTO</Text>
+              <Text style={[type.display, styles.title, { color: colors.text }]}>Proyectos</Text>
             </View>
             <HeaderButton
               label={scheme === 'light' ? '☾' : '☀'}
-              accessibilityLabel="Toggle theme"
+              accessibilityLabel="Cambiar tema"
               onPress={toggle}
             />
           </View>
@@ -55,26 +55,26 @@ export function ProjectsScreen() {
           {overview && (
             <>
               <View style={[styles.stats, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                <Stat value={overview.projects.length} label="active projects" />
+                <Stat value={overview.projects.length} label="proyectos activos" />
                 <View style={[styles.divider, { backgroundColor: colors.border }]} />
-                <Stat value={overview.winsThisWeek} label="wins this week" />
+                <Stat value={overview.winsThisWeek} label="logros esta semana" />
                 <View style={[styles.divider, { backgroundColor: colors.border }]} />
-                <Stat value={overview.totalWins} label="wins all time" />
+                <Stat value={overview.totalWins} label="logros en total" />
               </View>
 
               <View style={styles.sectionHeader}>
-                <Text style={[type.title, styles.sectionTitle, { color: colors.text }]}>Where you&apos;re making progress</Text>
+                <Text style={[type.title, styles.sectionTitle, { color: colors.text }]}>Donde estás avanzando</Text>
                 <Pressable
                   onPress={() => setAdding(true)}
                   accessibilityRole="button"
                   style={[styles.addButton, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                  <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>+ Add project</Text>
+                  <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>+ Agregar proyecto</Text>
                 </Pressable>
               </View>
 
               {overview.projects.length === 0 ? (
                 <Text style={[type.body, { color: colors.textMuted }]}>
-                  No projects yet. Add one to start logging wins.
+                  Aún no hay proyectos. Agrega uno para empezar a registrar logros.
                 </Text>
               ) : (
                 overview.projects.map((item) => <ProjectCard key={item.project.id} overview={item} />)
@@ -83,7 +83,7 @@ export function ProjectsScreen() {
           )}
 
           <Pressable onPress={() => container.signOut()} accessibilityRole="button" style={styles.signOut}>
-            <Text style={[type.bodySmall, { color: colors.textMuted }]}>Sign out</Text>
+            <Text style={[type.bodySmall, { color: colors.textMuted }]}>Cerrar sesión</Text>
           </Pressable>
         </View>
       </ScrollView>

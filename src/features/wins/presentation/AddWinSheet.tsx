@@ -42,20 +42,20 @@ function Form({ projects, onClose, onSave }: Omit<Props, 'visible'>) {
     <View style={styles.form}>
       <View style={styles.titleRow}>
         <View style={styles.titleBlock}>
-          <Text style={[type.label, { color: colors.textMuted }]}>CAPTURE THE MOMENT</Text>
-          <Text style={[type.title, { color: colors.text }]}>Add a win</Text>
+          <Text style={[type.label, { color: colors.textMuted }]}>CAPTURA EL MOMENTO</Text>
+          <Text style={[type.title, { color: colors.text }]}>Agregar un logro</Text>
         </View>
-        <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close" style={styles.close}>
+        <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Cerrar" style={styles.close}>
           <Text style={{ fontSize: 22, color: colors.textMuted }}>×</Text>
         </Pressable>
       </View>
 
       <View style={styles.field}>
-        <Text style={[type.bodySmall, styles.fieldLabel, { color: colors.text }]}>What did you finish?</Text>
+        <Text style={[type.bodySmall, styles.fieldLabel, { color: colors.text }]}>¿Qué terminaste?</Text>
         <TextInput
           value={title}
           onChangeText={setTitle}
-          placeholder="Even the small things count…"
+          placeholder="Hasta lo pequeño cuenta…"
           placeholderTextColor={colors.textMuted}
           multiline
           autoFocus
@@ -69,25 +69,25 @@ function Form({ projects, onClose, onSave }: Omit<Props, 'visible'>) {
       </View>
 
       <View style={styles.field}>
-        <Text style={[type.bodySmall, styles.fieldLabel, { color: colors.text }]}>Project</Text>
+        <Text style={[type.bodySmall, styles.fieldLabel, { color: colors.text }]}>Proyecto</Text>
         <ProjectSelect projects={projects} value={projectId} onChange={setProjectId} />
         {projects.length === 0 && (
           <Text style={[type.bodySmall, { color: colors.textMuted }]}>
-            No projects yet. Create one in the Projects tab first.
+            Aún no hay proyectos. Crea uno primero en la pestaña Proyectos.
           </Text>
         )}
       </View>
 
       <View style={[styles.milestone, { backgroundColor: colors.surfaceMuted }]}>
         <View style={styles.milestoneText}>
-          <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>Mark as a milestone</Text>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>For the wins you&apos;ll want to remember</Text>
+          <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>Marcar como hito</Text>
+          <Text style={[type.bodySmall, { color: colors.textMuted }]}>Para los logros que querrás recordar</Text>
         </View>
         <Switch
           value={isMilestone}
           onValueChange={setIsMilestone}
           trackColor={{ true: colors.accent, false: colors.border }}
-          accessibilityLabel="Mark as a milestone"
+          accessibilityLabel="Marcar como hito"
         />
       </View>
 
@@ -97,7 +97,7 @@ function Form({ projects, onClose, onSave }: Omit<Props, 'visible'>) {
         accessibilityRole="button"
         accessibilityState={{ disabled: !canSave }}
         style={[styles.save, { backgroundColor: colors.accent, opacity: canSave ? 1 : 0.4 }]}>
-        <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>Save win</Text>
+        <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>Guardar logro</Text>
       </Pressable>
     </View>
   );

@@ -15,8 +15,8 @@ export default function TabsLayout() {
         tabBarIconStyle: { display: 'none' },
         tabBarLabelStyle: { fontSize: 14, fontWeight: '600', paddingBottom: 8 },
       }}>
-      <Tabs.Screen name="week" options={{ title: 'Week' }} />
-      <Tabs.Screen name="projects" options={{ title: 'Projects' }} />
+      <Tabs.Screen name="week" options={{ title: 'Semana' }} />
+      <Tabs.Screen name="projects" options={{ title: 'Proyectos' }} />
     </Tabs>
   );
 }

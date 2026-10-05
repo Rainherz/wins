@@ -22,7 +22,7 @@ export function SignInScreen() {
       // On success the session listener swaps this screen for the app.
       await container.signIn(email, password);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not sign in.');
+      setError(err instanceof Error ? err.message : 'No se pudo iniciar sesión.');
       setSubmitting(false);
     }
   };
@@ -38,15 +38,15 @@ export function SignInScreen() {
       <View style={styles.card}>
         <View style={styles.header}>
           <Text style={[type.display, styles.title, { color: colors.text }]}>Wins</Text>
-          <Text style={[type.body, { color: colors.textMuted }]}>Sign in to see what moved forward.</Text>
+          <Text style={[type.body, { color: colors.textMuted }]}>Inicia sesión para ver qué avanzaste.</Text>
         </View>
 
         <View style={styles.field}>
-          <Text style={[type.bodySmall, styles.label, { color: colors.text }]}>Email</Text>
+          <Text style={[type.bodySmall, styles.label, { color: colors.text }]}>Correo electrónico</Text>
           <TextInput
             value={email}
             onChangeText={setEmail}
-            placeholder="you@example.com"
+            placeholder="tu@correo.com"
             placeholderTextColor={colors.textMuted}
             autoCapitalize="none"
             autoComplete="email"
@@ -57,7 +57,7 @@ export function SignInScreen() {
         </View>
 
         <View style={styles.field}>
-          <Text style={[type.bodySmall, styles.label, { color: colors.text }]}>Password</Text>
+          <Text style={[type.bodySmall, styles.label, { color: colors.text }]}>Contraseña</Text>
           <TextInput
             value={password}
             onChangeText={setPassword}
@@ -85,7 +85,7 @@ export function SignInScreen() {
           accessibilityState={{ disabled: !canSubmit }}
           style={[styles.button, { backgroundColor: colors.accent, opacity: canSubmit ? 1 : 0.4 }]}>
           <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>
-            {submitting ? 'Signing in…' : 'Sign in'}
+            {submitting ? 'Iniciando sesión…' : 'Iniciar sesión'}
           </Text>
         </Pressable>
       </View>

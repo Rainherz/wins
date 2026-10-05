@@ -23,15 +23,15 @@ export function DayHeader({ date, count, mood, isFuture }: Props) {
         <Text style={[type.bodySmall, { color: colors.textMuted }]}>{formatShortDate(date)}</Text>
         {count > 0 && (
           <Text style={[type.bodySmall, { color: colors.accentStrong }]}>
-            {count} {count === 1 ? 'win' : 'wins'}
+            {count} {count === 1 ? 'logro' : 'logros'}
           </Text>
         )}
       </View>
       {isFuture ? (
-        <Text style={[type.label, { color: colors.textMuted }]}>Still open</Text>
+        <Text style={[type.label, { color: colors.textMuted }]}>Por venir</Text>
       ) : (
         mood && (
-          <View style={styles.mood} accessibilityLabel={`Mood: ${moodMeta(mood).label}`}>
+          <View style={styles.mood} accessibilityLabel={`Ánimo: ${moodMeta(mood).label}`}>
             <Text style={[type.label, { color: moodColor(colors, mood) }]}>{moodMeta(mood).glyph}</Text>
             <Text style={[type.label, { color: moodColor(colors, mood) }]}>
               {moodMeta(mood).label.toUpperCase()}

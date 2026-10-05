@@ -140,7 +140,10 @@ Every interactive component defines: default, hover (web), pressed, focus-visibl
 - No motivational quotes, no stock photos, no decorative banners.
 - No claims about features that do not exist (encryption, sync, vaults).
 - Tone: calm and neutral. Missing days are never framed as failure.
-- All UI copy is English for now. Strings live in one place to allow translation later.
+- All UI copy is neutral Spanish (second person singular, no regional slang or voseo).
+  Glossary: win = logro, milestone = hito, close out the day = cerrar el día, week = semana.
+  Strings are inline in components for now. If a second language is ever needed, move
+  them into a single catalog first.
 
 ## Known issues to fix in the Figma file
 

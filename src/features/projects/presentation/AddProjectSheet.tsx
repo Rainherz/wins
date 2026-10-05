@@ -36,7 +36,7 @@ function Form({ onClose, onSave }: Omit<Props, 'visible'>) {
     try {
       await onSave({ name, description });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not save the project');
+      setError(err instanceof Error ? err.message : 'No se pudo guardar el proyecto');
       setSaving(false);
     }
   };
@@ -47,16 +47,16 @@ function Form({ onClose, onSave }: Omit<Props, 'visible'>) {
     <View style={styles.form}>
       <View style={styles.titleRow}>
         <View style={styles.titleBlock}>
-          <Text style={[type.label, { color: colors.textMuted }]}>NEW PROJECT</Text>
-          <Text style={[type.title, { color: colors.text }]}>Add a project</Text>
+          <Text style={[type.label, { color: colors.textMuted }]}>NUEVO PROYECTO</Text>
+          <Text style={[type.title, { color: colors.text }]}>Agregar un proyecto</Text>
         </View>
-        <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close" style={styles.close}>
+        <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Cerrar" style={styles.close}>
           <Text style={{ fontSize: 22, color: colors.textMuted }}>×</Text>
         </Pressable>
       </View>
 
       <View style={styles.field}>
-        <Text style={[type.bodySmall, styles.label, { color: colors.text }]}>Name</Text>
+        <Text style={[type.bodySmall, styles.label, { color: colors.text }]}>Nombre</Text>
         <TextInput
           value={name}
           onChangeText={setName}
@@ -69,17 +69,17 @@ function Form({ onClose, onSave }: Omit<Props, 'visible'>) {
       </View>
 
       <View style={styles.field}>
-        <Text style={[type.bodySmall, styles.label, { color: colors.text }]}>Description (optional)</Text>
+        <Text style={[type.bodySmall, styles.label, { color: colors.text }]}>Descripción (opcional)</Text>
         <TextInput
           value={description}
           onChangeText={setDescription}
-          placeholder="Team platform"
+          placeholder="Plataforma del equipo"
           placeholderTextColor={colors.textMuted}
           style={inputStyle}
         />
       </View>
 
-      <Text style={[type.bodySmall, { color: colors.textMuted }]}>A color is assigned automatically.</Text>
+      <Text style={[type.bodySmall, { color: colors.textMuted }]}>El color se asigna automáticamente.</Text>
 
       {error && (
         <Text accessibilityRole="alert" style={[type.bodySmall, { color: colors.accentStrong }]}>
@@ -93,7 +93,7 @@ function Form({ onClose, onSave }: Omit<Props, 'visible'>) {
         accessibilityRole="button"
         accessibilityState={{ disabled: !canSave }}
         style={[styles.save, { backgroundColor: colors.accent, opacity: canSave ? 1 : 0.4 }]}>
-        <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>Save project</Text>
+        <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>Guardar proyecto</Text>
       </Pressable>
     </View>
   );
