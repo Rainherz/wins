@@ -8,7 +8,7 @@ iOS, Android and web from one codebase.
 
 | Concern            | Choice                                   | Notes                                     |
 |--------------------|------------------------------------------|-------------------------------------------|
-| Framework          | Expo (React Native) + TypeScript strict  | Web via react-native-web. Pin SDK at init.|
+| Framework          | Expo SDK 57 (React Native) + TypeScript strict | Web via react-native-web. Package manager: pnpm. |
 | Routing            | expo-router                              | Routes stay thin, no logic.               |
 | Backend            | Supabase (Postgres, Auth, RLS)           | Reached only through adapters.            |
 | Server state       | TanStack Query                           | Wraps use cases, handles cache/loading.   |
@@ -27,7 +27,7 @@ infrastructure ->  application (implements ports)
 - **application**: use cases and **ports** (interfaces). Depends only on domain.
 - **infrastructure**: adapters that implement ports (Supabase repositories, auth).
 - **presentation**: screens, components, hooks. Calls use cases, never Supabase.
-- Composition root wires adapters into use cases (`src/app/container.ts`).
+- Composition root wires adapters into use cases (`src/composition/container.ts`).
 
 Dependencies point inward. Swapping Supabase for a custom API means writing new
 adapters only.
@@ -36,12 +36,12 @@ adapters only.
 
 ```
 wins/
-├── app/                         # expo-router routes (thin)
-│   ├── _layout.tsx
-│   ├── (tabs)/week.tsx
-│   ├── (tabs)/projects.tsx
-│   └── sign-in.tsx
 ├── src/
+│   ├── app/                     # expo-router routes (thin)
+│   │   ├── _layout.tsx
+│   │   ├── (tabs)/week.tsx
+│   │   ├── (tabs)/projects.tsx
+│   │   └── sign-in.tsx
 │   ├── features/
 │   │   ├── wins/
 │   │   │   ├── domain/          # Win, WeekRange, weekly aggregation
@@ -67,7 +67,7 @@ wins/
 │   │   ├── ui/                  # atoms and molecules (Button, Chip, Star, Dot, Fab)
 │   │   ├── theme/               # tokens, light/dark, useTheme
 │   │   └── lib/                 # date helpers, result type
-│   └── app/container.ts         # composition root
+│   └── composition/container.ts # composition root
 └── supabase/
     └── migrations/              # SQL schema + RLS policies, versioned
 ```
@@ -148,4 +148,3 @@ the data private.
 
 - Session storage adapter (AsyncStorage vs expo-sqlite localStorage). Check current
   Supabase and Expo guidance when scaffolding.
-- Expo SDK version to pin.
