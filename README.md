@@ -1,107 +1,108 @@
 # Wins
 
-A personal progress tracker for people whose days are made of projects and tasks. Log what you finished, close the day with how it felt, and see your week at a glance, so progress stops disappearing the moment you check something off.
+Un registro personal de avance para quienes tienen días hechos de proyectos y tareas. Registra lo que terminaste, cierra el día indicando cómo se sintió y revisa tu semana de un vistazo, para que el progreso deje de desaparecer en cuanto marcas algo como hecho.
 
-Built with React Native (Expo), runs on web, iOS and Android from one codebase. Backend: Supabase.
+Construida con React Native (Expo). Funciona en web, iOS y Android con un solo código. Backend: Supabase. La interfaz está en español.
 
-## The problem
+## El problema
 
-Finished tasks vanish. At the end of the week it feels like nothing moved, and motivation drops. Wins keeps every finished thing visible, grouped by day and project.
+Las tareas terminadas desaparecen. Al final de la semana parece que nada avanzó y la motivación cae. Wins mantiene visible cada logro, agrupado por día y por proyecto.
 
-## Features
+## Funcionalidades
 
-| Screen | What it does |
-|--------|--------------|
-| **Week** | Total wins and projects touched, comparison with last week, a bar per day, and every win grouped by day with the day's mood. Star a win to mark it as a milestone. |
-| **Add a win** | Capture what you finished in a few seconds: text, project, optional milestone. |
-| **Close out today** | Pick how the day felt (good, so-so, tough), review today's wins and leave an optional note about what got stuck. |
-| **Projects** | Each project with wins this week, last touched, and a 7-day activity chart. Add new projects, each with its own color. |
+| Pantalla | Qué hace |
+|----------|----------|
+| **Semana** | Total de logros y proyectos tocados, comparación con la semana pasada, una barra por día y cada logro agrupado por día con el ánimo de esa jornada. Marca un logro con la estrella para convertirlo en hito. |
+| **Agregar un logro** | Registra lo que terminaste en pocos segundos: texto, proyecto y, si quieres, hito. |
+| **Cerrar el día** | Elige cómo se sintió el día (bien, regular, difícil), revisa los logros de hoy y deja una nota opcional sobre lo que se trabó. |
+| **Proyectos** | Cada proyecto con sus logros de la semana, la última actividad y un gráfico de 7 días. Permite crear proyectos nuevos, cada uno con su propio color. |
 
-Also: light theme by default with a dark alternative, responsive layout (bottom sheets on phones, centered modals on wide screens), and single-user sign-in.
+Además: tema claro por defecto con una alternativa oscura, diseño adaptable (hojas inferiores en celular y modales centrados en pantallas anchas) e inicio de sesión para un solo usuario.
 
-## Quick path
+## Camino rápido
 
-Requirements: a recent Node.js, [pnpm](https://pnpm.io) and a free [Supabase](https://supabase.com) account.
+Requisitos: una versión reciente de Node.js, [pnpm](https://pnpm.io) y una cuenta gratuita de [Supabase](https://supabase.com).
 
-1. Install dependencies:
+1. Instala las dependencias:
 
    ```bash
    pnpm install
    ```
 
-2. Create a Supabase project, then open **SQL Editor** and run [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql).
+2. Crea un proyecto en Supabase, abre el **SQL Editor** y ejecuta [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql).
 
-3. In Supabase, create your user under **Authentication → Users → Add user** (check **Auto Confirm User**), then disable **Allow new users to sign up** in the sign-in settings.
+3. En Supabase, crea tu usuario en **Authentication → Users → Add user** (marca **Auto Confirm User**) y luego desactiva **Allow new users to sign up** en la configuración de inicio de sesión.
 
-4. Copy the environment file and fill in the project URL and publishable key (**Connect** or **Settings → API Keys**):
+4. Copia el archivo de entorno y completa la URL del proyecto y la publishable key (botón **Connect** o **Settings → API Keys**):
 
    ```bash
    cp .env.example .env
    ```
 
-5. Start the app:
+5. Inicia la app:
 
    ```bash
    pnpm web
    ```
 
-Expected result: a sign-in screen. After signing in you land on the Week screen.
+Resultado esperado: una pantalla de inicio de sesión. Al ingresar llegas a la pantalla Semana.
 
-> Use only the **publishable** key. The secret / service role key must never go in this project.
+> Usa únicamente la clave **publishable**. La clave secret o service role nunca debe estar en este proyecto.
 
 ## Scripts
 
-| Command | Purpose |
-|---------|---------|
-| `pnpm start` | Start the Expo dev server |
-| `pnpm web` | Run in the browser |
-| `pnpm ios` / `pnpm android` | Run on a simulator or device |
-| `pnpm typecheck` | TypeScript check |
-| `pnpm lint` | ESLint with the Expo config |
+| Comando | Para qué sirve |
+|---------|----------------|
+| `pnpm start` | Inicia el servidor de desarrollo de Expo |
+| `pnpm web` | Ejecuta la app en el navegador |
+| `pnpm ios` / `pnpm android` | Ejecuta en un simulador o dispositivo |
+| `pnpm typecheck` | Revisión de tipos con TypeScript |
+| `pnpm lint` | ESLint con la configuración de Expo |
 
-## How it is built
+## Cómo está construida
 
-| Area | Choice |
-|------|--------|
-| App | Expo SDK 57, React Native, TypeScript (strict), Expo Router |
-| Backend | Supabase: Postgres, Auth, row level security |
-| Architecture | Hexagonal (ports and adapters), organized by feature |
-| Design | Tokens and components documented in [`docs/design-system.md`](docs/design-system.md) |
+| Área | Decisión |
+|------|----------|
+| App | Expo SDK 57, React Native, TypeScript (estricto), Expo Router |
+| Backend | Supabase: Postgres, Auth y seguridad a nivel de fila (RLS) |
+| Arquitectura | Hexagonal (puertos y adaptadores), organizada por funcionalidad |
+| Diseño | Tokens y componentes documentados en [`docs/design-system.md`](docs/design-system.md) |
 
-Each feature (`wins`, `projects`, `closeout`, `auth`) has four layers. Dependencies point inward, so the domain never imports React or Supabase:
+Cada funcionalidad (`wins`, `projects`, `closeout`, `auth`) tiene cuatro capas. Las dependencias apuntan hacia adentro, de modo que el dominio nunca importa React ni Supabase:
 
 ```
 presentation → application → domain
-infrastructure → application (implements its ports)
+infrastructure → application (implementa sus puertos)
 ```
 
 ```
 src/
-├── app/            # Expo Router routes (thin)
+├── app/            # Rutas de Expo Router (delgadas)
 ├── features/       # wins, projects, closeout, auth
 │   └── <feature>/{domain,application,infrastructure,presentation}
-├── shared/         # theme tokens, UI atoms, helpers
-└── composition/    # wires Supabase adapters into use cases
-supabase/migrations # database schema and RLS policies
+├── shared/         # tokens de tema, componentes base, utilidades
+└── composition/    # conecta los adaptadores de Supabase con los casos de uso
+supabase/migrations # esquema de la base de datos y políticas RLS
 ```
 
-Swapping Supabase for another backend means writing new adapters only. Details in [`docs/architecture.md`](docs/architecture.md).
+Cambiar Supabase por otro backend implica escribir solo nuevos adaptadores. Más detalles en [`docs/architecture.md`](docs/architecture.md).
 
-## Security
+## Seguridad
 
-- Every table has row level security: a user can only read and write their own rows.
-- Sign-up is disabled, so the account created in the dashboard is the only one.
-- `.env` is git-ignored. Only the publishable key is used on the client.
+- Todas las tablas tienen seguridad a nivel de fila: cada usuario solo puede leer y escribir sus propios datos.
+- El registro de usuarios está desactivado, así que la cuenta creada desde el panel es la única.
+- `.env` está ignorado por git. En el cliente solo se usa la clave publishable.
 
-## Notes
+## Notas
 
-- Automated tests are out of scope for this first version. The hexagonal split keeps domain logic free of React and Supabase, so unit tests can be added later without refactoring.
-- With pnpm 11, `expo install` fails. Add dependencies with `pnpm add` using the versions Expo recommends.
+- Las pruebas automáticas quedan fuera del alcance de esta primera versión. La separación hexagonal mantiene la lógica de dominio libre de React y Supabase, por lo que se pueden agregar pruebas unitarias más adelante sin refactorizar.
+- Con pnpm 11, `expo install` falla. Agrega las dependencias con `pnpm add` usando las versiones que recomienda Expo.
+- La documentación técnica de `docs/` está en inglés.
 
-## Roadmap
+## Hoja de ruta
 
-- [ ] Sidebar navigation on desktop
-- [ ] Real icon set and the DM Sans typeface
-- [ ] Deploy the web build
-- [ ] Edit and delete wins and projects
-- [ ] Offline support
+- [ ] Navegación con barra lateral en escritorio
+- [ ] Set de íconos real y tipografía DM Sans
+- [ ] Publicar la versión web
+- [ ] Editar y eliminar logros y proyectos
+- [ ] Soporte sin conexión
