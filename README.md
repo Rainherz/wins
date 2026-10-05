@@ -2,7 +2,7 @@
 
 Un registro personal de avance para quienes tienen días hechos de proyectos y tareas. Registra lo que terminaste, cierra el día indicando cómo se sintió y revisa tu semana de un vistazo, para que el progreso deje de desaparecer en cuanto marcas algo como hecho.
 
-Construida con React Native (Expo). Funciona en web, iOS y Android con un solo código. Backend: Supabase. La interfaz está en español.
+Construida con React Native (Expo). Funciona en web, iOS y Android con un solo código. Backend: Supabase.
 
 ## El problema
 
