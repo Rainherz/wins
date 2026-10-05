@@ -58,7 +58,7 @@ wins/
 │   │   │   └── presentation/    # CloseOutSheet, MoodOption
 │   │   └── auth/
 │   │       ├── domain/
-│   │       ├── application/     # SignIn, SignOut, GetSession, AuthPort
+│   │       ├── application/     # SignIn, AuthPort
 │   │       ├── infrastructure/  # SupabaseAuthAdapter
 │   │       └── presentation/
 │   ├── shared/
@@ -84,10 +84,10 @@ for "Copy summary".
 
 ## Ports (application layer)
 
-- `WinRepository`: `add`, `setMilestone`, `listByRange`, `countByRange`
-- `ProjectRepository`: `create`, `list`, `archive`
+- `WinRepository`: `add` (returns the win with its database-generated id), `setMilestone`, `listAll`, `listByRange`, `countByRange`
+- `ProjectRepository`: `add` (returns the project with its generated id), `list`
 - `DayClosureRepository`: `upsert`, `listByRange`
-- `AuthPort`: `signIn`, `signOut`, `currentSession`, `onSessionChange`
+- `AuthPort`: `signIn`, `signOut`, `onSessionChange` (emits the current session right away, then on every change)
 - `Clock`: `now()` so time-dependent logic is testable
 
 ## Use cases (MVP)
@@ -137,7 +137,9 @@ the data private.
 - Method: **email and password**.
 - The user is created once from the Supabase dashboard. **"Allow new users to sign
   up" is disabled**, so nobody else can register.
-- No sign-up, password reset or profile screens. Only `SignIn` and `SignOut`.
+- No sign-up, password reset or profile screens. Only sign in and sign out.
+- Routes are guarded with `Stack.Protected` in the root layout: signed-out users only reach `sign-in`.
+- Web builds as a single-page app (`web.output: single`) so session storage never runs during server rendering.
 - The session persists on the device, so sign-in happens once per device.
 - RLS policies stay as defined (`auth.uid() = user_id`). They are cheap and keep the
   model correct if the scope ever grows.

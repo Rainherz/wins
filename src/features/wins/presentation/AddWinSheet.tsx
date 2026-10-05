@@ -71,6 +71,11 @@ function Form({ projects, onClose, onSave }: Omit<Props, 'visible'>) {
       <View style={styles.field}>
         <Text style={[type.bodySmall, styles.fieldLabel, { color: colors.text }]}>Project</Text>
         <ProjectSelect projects={projects} value={projectId} onChange={setProjectId} />
+        {projects.length === 0 && (
+          <Text style={[type.bodySmall, { color: colors.textMuted }]}>
+            No projects yet. Create one in the Projects tab first.
+          </Text>
+        )}
       </View>
 
       <View style={[styles.milestone, { backgroundColor: colors.surfaceMuted }]}>

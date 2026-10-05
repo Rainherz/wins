@@ -18,13 +18,10 @@ export const createLogWin =
       throw new InvalidWinError(`Title must be at most ${MAX_TITLE_LENGTH} characters`);
     }
 
-    const win: Win = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    return wins.add({
       projectId: input.projectId,
       title,
       isMilestone: input.isMilestone,
       achievedAt: clock.now(),
-    };
-    await wins.add(win);
-    return win;
+    });
   };

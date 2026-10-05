@@ -81,6 +81,10 @@ export function ProjectsScreen() {
               )}
             </>
           )}
+
+          <Pressable onPress={() => container.signOut()} accessibilityRole="button" style={styles.signOut}>
+            <Text style={[type.bodySmall, { color: colors.textMuted }]}>Sign out</Text>
+          </Pressable>
         </View>
       </ScrollView>
 
@@ -109,6 +113,7 @@ const styles = StyleSheet.create({
   stats: { flexDirection: 'row', borderRadius: radius.lg, borderWidth: 1, paddingVertical: spacing.lg },
   stat: { flex: 1, alignItems: 'center', gap: 2 },
   divider: { width: 1 },
+  signOut: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
   sectionTitle: { flexShrink: 1 },
   addButton: {

@@ -31,12 +31,9 @@ export const createCreateProject =
       throw new InvalidProjectError('A project with that name already exists');
     }
 
-    const project: Project = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    return projects.add({
       name,
       description: input.description?.trim() ?? '',
       colorSlot: nextColorSlot(existing),
-    };
-    await projects.add(project);
-    return project;
+    });
   };

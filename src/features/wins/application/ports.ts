@@ -1,7 +1,10 @@
 import type { Win } from '../domain/win';
 
+export type NewWin = Omit<Win, 'id'>;
+
 export interface WinRepository {
-  add(win: Win): Promise<void>;
+  /** Persists the win and returns it with its generated id. */
+  add(win: NewWin): Promise<Win>;
   listAll(): Promise<Win[]>;
   /** Wins achieved in [from, to). */
   listByRange(from: Date, to: Date): Promise<Win[]>;
