@@ -1,14 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Redirect } from 'expo-router';
 
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Wins</Text>
-    </View>
-  );
+  return <Redirect href="/week" />;
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F7F5F1' },
-  title: { fontSize: 40, color: '#1F1E1B' },
-});

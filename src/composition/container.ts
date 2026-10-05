@@ -1,0 +1,21 @@
+import { InMemoryDayClosureRepository } from '@/features/closeout/infrastructure/InMemoryDayClosureRepository';
+import { InMemoryProjectRepository } from '@/features/projects/infrastructure/InMemoryProjectRepository';
+import { createGetWeekSummary } from '@/features/wins/application/getWeekSummary';
+import type { Clock } from '@/features/wins/application/ports';
+import { createToggleMilestone } from '@/features/wins/application/toggleMilestone';
+import { InMemoryWinRepository } from '@/features/wins/infrastructure/InMemoryWinRepository';
+
+import { buildSeed } from './seed';
+
+const clock: Clock = { now: () => new Date() };
+
+// Local sample data for now. Supabase adapters replace these without touching use cases.
+const seed = buildSeed(clock.now());
+const wins = new InMemoryWinRepository(seed.wins);
+const projects = new InMemoryProjectRepository(seed.projects);
+const closures = new InMemoryDayClosureRepository(seed.closures);
+
+export const container = {
+  getWeekSummary: createGetWeekSummary({ wins, projects, closures, clock }),
+  toggleMilestone: createToggleMilestone(wins),
+};
