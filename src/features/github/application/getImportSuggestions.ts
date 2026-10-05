@@ -1,6 +1,7 @@
 import type { ProjectRepository } from '@/features/projects/application/ports';
 import type { WinRepository } from '@/features/wins/application/ports';
-import { projectNameFromRepo, type GithubWork } from '../domain/githubWork';
+import type { GithubWork } from '../domain/githubWork';
+import { matchRepoToProject } from '../domain/repoMatching';
 import type { GithubConnectionRepository, GithubPort } from './ports';
 
 export class GithubNotConnectedError extends Error {}
@@ -31,14 +32,17 @@ export const createGetImportSuggestions =
     ]);
 
     const imported = new Set(importedIds);
-    const projectNames = new Set(projectList.map((project) => project.name.toLowerCase()));
 
     const suggestions = work
       .filter((item) => item.doneAt >= from && item.doneAt < to && !imported.has(item.externalId))
       .sort((a, b) => b.doneAt.getTime() - a.doneAt.getTime())
       .map((item): ImportSuggestion => {
-        const projectName = projectNameFromRepo(item.repo);
-        return { ...item, projectName, projectExists: projectNames.has(projectName.toLowerCase()) };
+        const match = matchRepoToProject(item.repo, projectList);
+        return {
+          ...item,
+          projectName: match.kind === 'new' ? match.name : match.project.name,
+          projectExists: match.kind !== 'new',
+        };
       });
 
     return { login: connection.login, suggestions };

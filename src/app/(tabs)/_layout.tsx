@@ -20,6 +20,8 @@ export default function TabsLayout() {
         }}>
         <Tabs.Screen name="week" options={{ title: 'Semana' }} />
         <Tabs.Screen name="projects" options={{ title: 'Proyectos' }} />
+        {/* Opened from a project card. Not a tab, so it stays out of the navigation. */}
+        <Tabs.Screen name="project/[id]" options={{ href: null }} />
       </Tabs>
     </CaptureProvider>
   );

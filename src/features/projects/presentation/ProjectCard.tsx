@@ -30,7 +30,7 @@ export function ProjectCard({ overview, onPress }: Props) {
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`Editar proyecto ${project.name}`}
+      accessibilityLabel={`Abrir proyecto ${project.name}`}
       style={({ hovered }) => [
         styles.card,
         {
@@ -46,9 +46,12 @@ export function ProjectCard({ overview, onPress }: Props) {
       </View>
 
       <View style={styles.info}>
-        <Text style={[type.heading, { color: colors.text }]} numberOfLines={1}>
-          {project.name}
-        </Text>
+        <View style={styles.nameRow}>
+          <Text style={[type.heading, { color: colors.text }, styles.name]} numberOfLines={1}>
+            {project.name}
+          </Text>
+          {!!project.githubRepo && <Icon name="github" size={16} color={colors.textMuted} />}
+        </View>
         {project.description !== '' && (
           <Text style={[type.bodySmall, { color: colors.textMuted }]} numberOfLines={1}>
             {project.description}
@@ -94,6 +97,8 @@ const styles = StyleSheet.create({
   },
   avatar: { width: 48, height: 48, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center' },
   info: { flex: 1, gap: 2 },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  name: { flexShrink: 1 },
   touched: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.xs },
   stats: { alignItems: 'flex-end', gap: 2 },
   count: { fontSize: 30, lineHeight: 32 },

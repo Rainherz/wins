@@ -53,6 +53,17 @@ export class SupabaseWinRepository implements WinRepository {
     return data.map(toWin);
   }
 
+  async listByProject(projectId: string) {
+    const { data, error } = await this.client
+      .from('wins')
+      .select()
+      .eq('project_id', projectId)
+      .order('achieved_at', { ascending: false })
+      .returns<WinRow[]>();
+    if (error) throw new Error(error.message);
+    return data.map(toWin);
+  }
+
   async listByRange(from: Date, to: Date) {
     const { data, error } = await this.client
       .from('wins')

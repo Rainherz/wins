@@ -10,4 +10,6 @@ export type Project = {
   colorSlot: number;
   /** Set when the project is finished. Finished projects stay in the history. */
   archivedAt?: Date;
+  /** The GitHub repository this project comes from, as "owner/name". */
+  githubRepo?: string;
 };

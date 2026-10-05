@@ -2,6 +2,7 @@ import type { CreateProjectInput } from '@/features/projects/application/createP
 import type { ProjectRepository } from '@/features/projects/application/ports';
 import type { Project } from '@/features/projects/domain/project';
 import type { WinRepository } from '@/features/wins/application/ports';
+import { matchRepoToProject } from '../domain/repoMatching';
 import type { ImportSuggestion } from './getImportSuggestions';
 
 type Deps = {
@@ -10,19 +11,30 @@ type Deps = {
   createProject: (input: CreateProjectInput) => Promise<Project>;
 };
 
-/** Turns the chosen suggestions into wins, creating a project per new repository. Returns how many were imported. */
+/**
+ * Turns the chosen suggestions into wins. Each one goes to the project linked to its repository;
+ * a missing project is created, and an unlinked project of the same name gets linked.
+ * Returns how many were imported.
+ */
 export const createImportFromGithub =
   ({ wins, projects, createProject }: Deps) =>
   async (selected: ImportSuggestion[]): Promise<number> => {
-    const byName = new Map((await projects.list({ includeArchived: true })).map((project) => [project.name.toLowerCase(), project]));
+    let known = await projects.list({ includeArchived: true });
 
     // Sequential on purpose: each new project picks the next free color.
     for (const item of selected) {
-      const key = item.projectName.toLowerCase();
-      let project = byName.get(key);
-      if (!project) {
-        project = await createProject({ name: item.projectName, description: item.repo });
-        byName.set(key, project);
+      const match = matchRepoToProject(item.repo, known);
+      let project: Project;
+
+      if (match.kind === 'linked') {
+        project = match.project;
+      } else if (match.kind === 'link') {
+        await projects.update(match.project.id, { githubRepo: item.repo });
+        project = { ...match.project, githubRepo: item.repo };
+        known = known.map((candidate) => (candidate.id === project.id ? project : candidate));
+      } else {
+        project = await createProject({ name: match.name, description: item.repo, githubRepo: item.repo });
+        known = [...known, project];
       }
 
       await wins.add({

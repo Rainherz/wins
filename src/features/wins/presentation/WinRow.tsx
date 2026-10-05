@@ -1,7 +1,7 @@
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
 import type { Project } from '@/features/projects/domain/project';
-import { formatTime } from '@/shared/lib/dates';
+import { formatShortDate, formatTime } from '@/shared/lib/dates';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
 import { IconButton } from '@/shared/ui/IconButton';
@@ -13,13 +13,15 @@ type Props = {
   project?: Project;
   onToggleMilestone: () => void;
   onEdit: () => void;
+  /** Show the day as well as the time, for lists that span several days. */
+  showDate?: boolean;
 };
 
 /**
  * The text area opens the editor; the GitHub link and the star are separate siblings.
  * Interactive elements cannot be nested inside a button on the web, so they stay side by side.
  */
-export function WinRow({ win, project, onToggleMilestone, onEdit }: Props) {
+export function WinRow({ win, project, onToggleMilestone, onEdit, showDate = false }: Props) {
   const { colors } = useTheme();
   const dotColor = project ? colors.projects[project.colorSlot] : colors.textMuted;
 
@@ -47,7 +49,10 @@ export function WinRow({ win, project, onToggleMilestone, onEdit }: Props) {
               <View style={styles.meta}>
                 <Text style={[type.caption, { color: colors.textMuted }]}>{project?.name ?? 'Sin proyecto'}</Text>
                 <Text style={[type.caption, { color: colors.textMuted }]}>·</Text>
-                <Text style={[type.caption, { color: colors.textMuted }]}>{formatTime(win.achievedAt)}</Text>
+                <Text style={[type.caption, { color: colors.textMuted }]}>
+                  {showDate ? `${formatShortDate(win.achievedAt)} · ` : ''}
+                  {formatTime(win.achievedAt)}
+                </Text>
               </View>
             </View>
           </>

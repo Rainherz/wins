@@ -25,10 +25,14 @@ function useNavItems({ state, navigation }: BottomTabBarProps) {
   return state.routes
     .filter((route) => ITEMS[route.name])
     .map((route, index) => {
-      const focused = state.index === state.routes.indexOf(route);
+      // The project detail is a child of Projects, so that tab stays highlighted while it is open.
+      const current = state.routes[state.index]?.name ?? '';
+      const onThisRoute = state.index === state.routes.indexOf(route);
+      const focused = onThisRoute || (route.name === 'projects' && current.startsWith('project/'));
       const onPress = () => {
         const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-        if (!focused && !event.defaultPrevented) navigation.navigate(route.name, route.params);
+        // Navigate unless we are exactly on this route: from a project detail, "Proyectos" goes back to the list.
+        if (!onThisRoute && !event.defaultPrevented) navigation.navigate(route.name, route.params);
       };
       return { key: route.key, index, focused, onPress, ...ITEMS[route.name] };
     });

@@ -16,7 +16,7 @@ type Props = {
   visible: boolean;
   overview?: ProjectOverview;
   onClose: () => void;
-  onSave: (values: { name: string; description: string }) => Promise<void>;
+  onSave: (values: { name: string; description: string; githubRepo: string }) => Promise<void>;
   onToggleArchived: () => Promise<void>;
   /** The caller asks for confirmation before deleting. */
   onDelete: () => void;
@@ -35,6 +35,7 @@ function Form({ overview, onClose, onSave, onToggleArchived, onDelete }: Omit<Pr
   const { project, archived } = overview;
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.description);
+  const [githubRepo, setGithubRepo] = useState(project.githubRepo ?? '');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,6 +60,20 @@ function Form({ overview, onClose, onSave, onToggleArchived, onDelete }: Omit<Pr
 
       <TextField label="Nombre" value={name} onChangeText={setName} maxLength={MAX_PROJECT_NAME_LENGTH} />
       <TextField label="Descripción (opcional)" value={description} onChangeText={setDescription} />
+      <View style={styles.repo}>
+        <TextField
+          label="Repositorio de GitHub (opcional)"
+          icon="github"
+          value={githubRepo}
+          onChangeText={setGithubRepo}
+          placeholder="dueño/nombre"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        <Text style={[type.caption, { color: colors.textMuted }]}>
+          Al vincularlo verás sus issues y PRs abiertos en el detalle del proyecto.
+        </Text>
+      </View>
 
       {!!error && (
         <Text accessibilityRole="alert" style={[type.bodySmall, { color: colors.danger }]}>
@@ -69,7 +84,7 @@ function Form({ overview, onClose, onSave, onToggleArchived, onDelete }: Omit<Pr
       <Button
         label="Guardar cambios"
         icon="check"
-        onPress={() => run(() => onSave({ name, description }))}
+        onPress={() => run(() => onSave({ name, description, githubRepo }))}
         disabled={busy || name.trim() === ''}
         block
       />
@@ -90,5 +105,6 @@ function Form({ overview, onClose, onSave, onToggleArchived, onDelete }: Omit<Pr
 
 const styles = StyleSheet.create({
   form: { gap: spacing.xl },
+  repo: { gap: spacing.sm },
   secondary: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
 });

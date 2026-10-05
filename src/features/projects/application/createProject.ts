@@ -1,12 +1,13 @@
 import { PROJECT_COLOR_SLOTS, type Project } from '../domain/project';
 import type { ProjectRepository } from './ports';
-import { validateProjectName } from './projectRules';
+import { normalizeGithubRepo, validateProjectName } from './projectRules';
 
 export { InvalidProjectError } from './projectRules';
 
 export type CreateProjectInput = {
   name: string;
   description?: string;
+  githubRepo?: string;
 };
 
 /** Smallest palette slot not in use, so colors stay distinct for as long as possible. */
@@ -27,6 +28,7 @@ export const createCreateProject =
     return projects.add({
       name,
       description: input.description?.trim() ?? '',
+      githubRepo: normalizeGithubRepo(input.githubRepo),
       colorSlot: nextColorSlot(existing),
     });
   };

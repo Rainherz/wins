@@ -1,6 +1,7 @@
 import { InvalidGithubTokenError } from '../application/connectGithub';
 import type { GithubPort } from '../application/ports';
 import type { GithubConnection, GithubWork } from '../domain/githubWork';
+import { OPEN_WORK_LIMIT, type GithubOpenItem } from '../domain/githubOpenItem';
 import type { GithubRepo } from '../domain/githubRepo';
 
 const API = 'https://api.github.com';
@@ -29,6 +30,9 @@ async function request<T>(token: string, path: string): Promise<T> {
   if (response.status === 403 || response.status === 429) {
     throw new Error('GitHub limitó las solicitudes o el token no tiene permisos. Inténtalo en un minuto.');
   }
+  if (response.status === 404) {
+    throw new Error('GitHub no encontró el repositorio, o tu token no tiene acceso a él.');
+  }
   if (!response.ok) throw new Error('No se pudo consultar GitHub.');
   return response.json() as Promise<T>;
 }
@@ -46,6 +50,17 @@ type RepoItem = {
   html_url: string;
 };
 
+type IssueItem = {
+  number: number;
+  title: string;
+  html_url: string;
+  updated_at: string;
+  pull_request?: unknown;
+  draft?: boolean;
+  labels: ({ name?: string } | string)[];
+  user: { login: string } | null;
+};
+
 const REPOS_PER_PAGE = 100;
 const MAX_REPO_PAGES = 3;
 
@@ -53,6 +68,26 @@ const search = async (token: string, query: string) =>
   (await request<{ items: SearchItem[] }>(token, `/search/issues?q=${encodeURIComponent(query)}&per_page=100`)).items;
 
 export class GithubRestAdapter implements GithubPort {
+  async listOpenWork({ token }: GithubConnection, repo: string) {
+    // This endpoint returns issues and pull requests together; pull requests carry a `pull_request` key.
+    const items = await request<IssueItem[]>(
+      token,
+      `/repos/${repo}/issues?state=open&sort=updated&direction=desc&per_page=${OPEN_WORK_LIMIT}`,
+    );
+    return items.map(
+      (item): GithubOpenItem => ({
+        number: item.number,
+        title: item.title,
+        url: item.html_url,
+        kind: item.pull_request ? 'pr' : 'issue',
+        isDraft: item.draft === true,
+        updatedAt: new Date(item.updated_at),
+        labels: item.labels.map((label) => (typeof label === 'string' ? label : (label.name ?? ''))).filter(Boolean),
+        author: item.user?.login ?? '',
+      }),
+    );
+  }
+
   async listRepos({ token }: GithubConnection) {
     const repos: GithubRepo[] = [];
     for (let page = 1; page <= MAX_REPO_PAGES; page++) {

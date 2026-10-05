@@ -1,4 +1,4 @@
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,7 +10,6 @@ import { useIsTwoColumn, useIsWide } from '@/shared/lib/useIsWide';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
 import { Button } from '@/shared/ui/Button';
-import { ConfirmSheet } from '@/shared/ui/ConfirmSheet';
 import { ErrorNotice } from '@/shared/ui/ErrorNotice';
 import { Icon } from '@/shared/ui/Icon';
 import { IconButton } from '@/shared/ui/IconButton';
@@ -18,9 +17,8 @@ import { Segmented } from '@/shared/ui/Segmented';
 import { Text } from '@/shared/ui/Text';
 import { useCapture } from '@/shell/CaptureProvider';
 import type { CreateProjectInput } from '../application/createProject';
-import type { ProjectOverview, ProjectsOverview } from '../application/getProjectsOverview';
+import type { ProjectsOverview } from '../application/getProjectsOverview';
 import { AddProjectSheet } from './AddProjectSheet';
-import { EditProjectSheet } from './EditProjectSheet';
 import { ProjectCard } from './ProjectCard';
 
 const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`;
@@ -33,8 +31,6 @@ export function ProjectsScreen() {
   const [overview, setOverview] = useState<ProjectsOverview | null>(null);
   const [adding, setAdding] = useState(false);
   const [importing, setImporting] = useState(false);
-  const [editing, setEditing] = useState<ProjectOverview | null>(null);
-  const [deleting, setDeleting] = useState<ProjectOverview | null>(null);
   const [filter, setFilter] = useState<'active' | 'archived'>('active');
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -77,27 +73,6 @@ export function ProjectsScreen() {
   const onImported = async () => {
     await reload();
     setImporting(false);
-  };
-
-  const onSaveEdit = async (values: { name: string; description: string }) => {
-    if (!editing) return;
-    await container.updateProject({ id: editing.project.id, ...values });
-    await reload();
-    setEditing(null);
-  };
-
-  const onToggleArchived = async () => {
-    if (!editing) return;
-    await container.setProjectArchived(editing.project.id, !editing.archived);
-    await reload();
-    setEditing(null);
-  };
-
-  const onConfirmDelete = async () => {
-    if (!deleting) return;
-    await container.deleteProject(deleting.project.id);
-    await reload();
-    setDeleting(null);
   };
 
   const showFilter = overview !== null && (overview.archivedCount > 0 || filter === 'archived');
@@ -169,7 +144,10 @@ export function ProjectsScreen() {
               <View style={[styles.list, twoColumn && styles.grid]}>
                 {visible.map((item) => (
                   <View key={item.project.id} style={twoColumn && styles.gridItem}>
-                    <ProjectCard overview={item} onPress={() => setEditing(item)} />
+                    <ProjectCard
+                      overview={item}
+                      onPress={() => router.push({ pathname: '/project/[id]', params: { id: item.project.id } })}
+                    />
                   </View>
                 ))}
               </View>
@@ -183,31 +161,6 @@ export function ProjectsScreen() {
 
       <GithubReposSheet visible={importing} onClose={() => setImporting(false)} onImported={onImported} />
       <AddProjectSheet visible={adding} onClose={() => setAdding(false)} onSave={onSaveNew} />
-      <EditProjectSheet
-        visible={editing !== null}
-        overview={editing ?? undefined}
-        onClose={() => setEditing(null)}
-        onSave={onSaveEdit}
-        onToggleArchived={onToggleArchived}
-        onDelete={() => {
-          setDeleting(editing);
-          setEditing(null);
-        }}
-      />
-      <ConfirmSheet
-        visible={deleting !== null}
-        title="¿Eliminar este proyecto?"
-        description={
-          deleting
-            ? deleting.totalWins > 0
-              ? `Se eliminará «${deleting.project.name}» junto con ${plural(deleting.totalWins, 'logro', 'logros')}. No se puede deshacer.`
-              : `Se eliminará «${deleting.project.name}». No se puede deshacer.`
-            : ''
-        }
-        confirmLabel="Eliminar proyecto"
-        onConfirm={onConfirmDelete}
-        onClose={() => setDeleting(null)}
-      />
     </SafeAreaView>
   );
 }

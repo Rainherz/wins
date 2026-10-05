@@ -13,7 +13,6 @@ import { useIsTwoColumn, useIsWide } from '@/shared/lib/useIsWide';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
 import { Button } from '@/shared/ui/Button';
-import { ConfirmSheet } from '@/shared/ui/ConfirmSheet';
 import { ErrorNotice } from '@/shared/ui/ErrorNotice';
 import { IconButton } from '@/shared/ui/IconButton';
 import { Text } from '@/shared/ui/Text';
@@ -21,7 +20,7 @@ import { useCapture } from '@/shell/CaptureProvider';
 import type { WeekSummary } from '../application/getWeekSummary';
 import type { Win } from '../domain/win';
 import { DaySection } from './DaySection';
-import { WinFormSheet, type WinFormValues } from './WinFormSheet';
+import { WinEditorSheets } from './WinEditorSheets';
 import { WeekPulse } from './WeekPulse';
 
 const WEEKDAY_LETTERS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
@@ -42,7 +41,6 @@ export function WeekScreen() {
   const [closing, setClosing] = useState(false);
   const [importing, setImporting] = useState(false);
   const [editing, setEditing] = useState<Win | null>(null);
-  const [deleting, setDeleting] = useState<Win | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -83,23 +81,6 @@ export function WeekScreen() {
     } catch (error) {
       setNotice(messageOf(error));
     }
-  };
-
-  const onSaveEdit = async (values: WinFormValues) => {
-    if (!editing) return;
-    await container.updateWin({ id: editing.id, ...values });
-    setEditing(null);
-    // If the day changed to another week, follow the win there.
-    const target = weekOffsetOf(values.achievedAt ?? editing.achievedAt, new Date());
-    if (target === weekOffset) await reload();
-    else goTo(target);
-  };
-
-  const onConfirmDelete = async () => {
-    if (!deleting) return;
-    await container.deleteWin(deleting.id);
-    await reload();
-    setDeleting(null);
   };
 
   const onCloseDay = async (input: CloseDayInput) => {
@@ -223,28 +204,21 @@ export function WeekScreen() {
         </View>
       </ScrollView>
 
-      <WinFormSheet
-        visible={editing !== null}
-        win={editing ?? undefined}
+      <WinEditorSheets
+        win={editing}
         projects={
           editing && summary
             ? Object.values(summary.projects).filter((project) => !project.archivedAt || project.id === editing.projectId)
             : []
         }
         onClose={() => setEditing(null)}
-        onSave={onSaveEdit}
-        onDelete={() => {
-          setDeleting(editing);
-          setEditing(null);
+        onSaved={async (win, values) => {
+          // If the day changed to another week, follow the win there.
+          const target = weekOffsetOf(values.achievedAt ?? win.achievedAt, new Date());
+          if (target === weekOffset) await reload();
+          else goTo(target);
         }}
-      />
-      <ConfirmSheet
-        visible={deleting !== null}
-        title="¿Eliminar este logro?"
-        description={deleting ? `«${deleting.title}» se eliminará para siempre.` : ''}
-        confirmLabel="Eliminar logro"
-        onConfirm={onConfirmDelete}
-        onClose={() => setDeleting(null)}
+        onDeleted={reload}
       />
       <CloseOutSheet
         visible={closing}

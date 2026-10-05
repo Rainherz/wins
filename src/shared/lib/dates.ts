@@ -67,3 +67,7 @@ export const formatDayChip = (day: Date, now: Date) => {
 /** Whole weeks between the week of `date` and the week of `now` (negative for the past). */
 export const weekOffsetOf = (date: Date, now: Date) =>
   Math.round((startOfWeek(date).getTime() - startOfWeek(now).getTime()) / (7 * 86_400_000));
+
+/** "hoy", "ayer", "hace 5 días" or "hace 3 meses", for a number of whole days. */
+export const formatDaysAgo = (days: number) =>
+  days <= 0 ? 'hoy' : days === 1 ? 'ayer' : days < 60 ? `hace ${days} días` : `hace ${Math.round(days / 30)} meses`;

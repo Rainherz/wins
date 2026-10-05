@@ -133,7 +133,7 @@ function Form({ onClose, onImported }: Omit<Props, 'visible'>) {
     (repo) =>
       (owner === null || repo.owner === owner) && repo.fullName.toLowerCase().includes(query.trim().toLowerCase()),
   );
-  const selectable = visibleRepos.filter((repo) => !repo.alreadyProject);
+  const selectable = visibleRepos.filter((repo) => repo.match !== 'linked');
   const allSelected = selectable.length > 0 && selectable.every((repo) => selected.has(repo.fullName));
 
   const toggleAll = () =>
@@ -287,20 +287,20 @@ function Form({ onClose, onImported }: Omit<Props, 'visible'>) {
                       <Pressable
                         key={repo.fullName}
                         onPress={() => toggle(repo.fullName)}
-                        disabled={repo.alreadyProject}
+                        disabled={repo.match === 'linked'}
                         accessibilityRole="checkbox"
-                        accessibilityState={{ checked, disabled: repo.alreadyProject }}
+                        accessibilityState={{ checked, disabled: repo.match === 'linked' }}
                         style={({ hovered }) => [
                           styles.item,
                           {
                             backgroundColor: checked ? colors.accentSoft : hovered ? colors.surfaceMuted : colors.surface,
                             borderColor: checked ? colors.accent : colors.border,
                           },
-                          repo.alreadyProject && { opacity: 0.55 },
+                          repo.match === 'linked' && { opacity: 0.55 },
                         ]}>
                         <Icon
                           name={
-                            repo.alreadyProject
+                            repo.match === 'linked'
                               ? 'check-circle-outline'
                               : checked
                                 ? 'checkbox-marked'
@@ -317,7 +317,13 @@ function Form({ onClose, onImported }: Omit<Props, 'visible'>) {
                             </Text>
                           )}
                           <View style={styles.tags}>
-                            {repo.alreadyProject && <Tag icon="check" label="Ya es un proyecto" />}
+                            {repo.match === 'linked' && <Tag icon="check" label="Ya es un proyecto" />}
+                            {repo.match === 'link' && (
+                              <Tag icon="link-variant" label={`Se vinculará a «${repo.projectName}»`} />
+                            )}
+                            {repo.match === 'new' && repo.projectName !== repo.name && (
+                              <Tag icon="plus" label={`Se creará como «${repo.projectName}»`} />
+                            )}
                             {repo.archived && <Tag icon="archive-outline" label="Archivado" />}
                             {repo.isPrivate && <Tag icon="lock-outline" label="Privado" />}
                             {repo.isFork && <Tag icon="source-fork" label="Fork" />}

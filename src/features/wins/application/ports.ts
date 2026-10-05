@@ -11,6 +11,8 @@ export interface WinRepository {
   /** Deletes every win of a project and returns how many were removed. */
   removeByProject(projectId: string): Promise<number>;
   listAll(): Promise<Win[]>;
+  /** Every win of a project, newest first. */
+  listByProject(projectId: string): Promise<Win[]>;
   /** Wins achieved in [from, to). */
   listByRange(from: Date, to: Date): Promise<Win[]>;
   countByRange(from: Date, to: Date): Promise<number>;

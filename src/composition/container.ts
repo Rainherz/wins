@@ -4,12 +4,14 @@ import { createCloseDay } from '@/features/closeout/application/closeDay';
 import { SupabaseDayClosureRepository } from '@/features/closeout/infrastructure/SupabaseDayClosureRepository';
 import { createConnectGithub, createDisconnectGithub } from '@/features/github/application/connectGithub';
 import { createGetImportSuggestions } from '@/features/github/application/getImportSuggestions';
+import { createGetPendingWork } from '@/features/github/application/getPendingWork';
 import { createGetRepoSuggestions } from '@/features/github/application/getRepoSuggestions';
 import { createImportFromGithub } from '@/features/github/application/importFromGithub';
 import { createImportRepos } from '@/features/github/application/importRepos';
 import { GithubRestAdapter } from '@/features/github/infrastructure/GithubRestAdapter';
 import { SupabaseGithubConnectionRepository } from '@/features/github/infrastructure/SupabaseGithubConnectionRepository';
 import { createCreateProject } from '@/features/projects/application/createProject';
+import { createGetProjectDetail } from '@/features/projects/application/getProjectDetail';
 import { createGetProjectsOverview } from '@/features/projects/application/getProjectsOverview';
 import { createDeleteProject } from '@/features/projects/application/deleteProject';
 import { createListProjects } from '@/features/projects/application/listProjects';
@@ -52,10 +54,12 @@ export const container = {
   setProjectArchived: createSetProjectArchived({ projects, clock }),
   deleteProject: createDeleteProject({ projects, wins }),
   getProjectsOverview: createGetProjectsOverview({ wins, projects, clock }),
+  getProjectDetail: createGetProjectDetail({ wins, projects, clock }),
   connectGithub: createConnectGithub({ github, connections: githubConnections }),
   disconnectGithub: createDisconnectGithub(githubConnections),
   getImportSuggestions: createGetImportSuggestions({ github, connections: githubConnections, wins, projects }),
   importFromGithub: createImportFromGithub({ wins, projects, createProject }),
   getRepoSuggestions: createGetRepoSuggestions({ github, connections: githubConnections, projects }),
-  importRepos: createImportRepos(createProject),
+  importRepos: createImportRepos({ projects, createProject }),
+  getPendingWork: createGetPendingWork({ github, connections: githubConnections }),
 };

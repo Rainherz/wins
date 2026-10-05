@@ -1,13 +1,14 @@
 import type { ProjectRepository } from '@/features/projects/application/ports';
 import type { GithubRepo } from '../domain/githubRepo';
-import { projectNameFromRepo } from '../domain/githubWork';
+import { matchRepoToProject } from '../domain/repoMatching';
 import { GithubNotConnectedError } from './getImportSuggestions';
 import type { GithubConnectionRepository, GithubPort } from './ports';
 
 export type RepoSuggestion = GithubRepo & {
+  /** Name of the project this repository maps to (existing or to be created). */
   projectName: string;
-  /** True when a project with that name already exists, so it cannot be imported again. */
-  alreadyProject: boolean;
+  /** linked: already a project. link: an unlinked project with that name will be linked. new: a project will be created. */
+  match: 'linked' | 'link' | 'new';
 };
 
 type Deps = {
@@ -23,13 +24,16 @@ export const createGetRepoSuggestions =
     if (!connection) throw new GithubNotConnectedError();
 
     const [repos, projectList] = await Promise.all([github.listRepos(connection), projects.list({ includeArchived: true })]);
-    const projectNames = new Set(projectList.map((project) => project.name.toLowerCase()));
 
     return {
       login: connection.login,
       repos: repos.map((repo): RepoSuggestion => {
-        const projectName = projectNameFromRepo(repo.fullName);
-        return { ...repo, projectName, alreadyProject: projectNames.has(projectName.toLowerCase()) };
+        const match = matchRepoToProject(repo.fullName, projectList);
+        return {
+          ...repo,
+          projectName: match.kind === 'new' ? match.name : match.project.name,
+          match: match.kind,
+        };
       }),
     };
   };

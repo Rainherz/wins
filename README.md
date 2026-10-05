@@ -15,7 +15,7 @@ Las tareas terminadas desaparecen. Al final de la semana parece que nada avanzó
 | **Semana** | Total de logros y proyectos tocados, comparación con la semana pasada, una barra por día y cada logro agrupado por día con el ánimo de esa jornada. Marca un logro con la estrella para convertirlo en hito. Con **Importar logros** traes tus PRs fusionados e issues cerrados de GitHub y eliges cuáles contar. |
 | **Agregar un logro** | Registra lo que terminaste en pocos segundos: texto, día (hoy o cualquiera de los últimos 7), proyecto y, si quieres, hito. Toca un logro para editarlo o eliminarlo. |
 | **Cerrar el día** | Elige cómo se sintió el día (bien, regular, difícil), revisa los logros de hoy y deja una nota opcional sobre lo que se trabó. |
-| **Proyectos** | Cada proyecto con sus logros de la semana, la última actividad y un gráfico de 7 días. Toca un proyecto para editarlo, **marcarlo como finalizado** (queda en el historial y puedes reactivarlo) o eliminarlo junto con sus logros. Permite crear proyectos nuevos, cada uno con su propio color, o **importar tus repositorios de GitHub** como proyectos (ves cuáles están archivados, cuántos issues abiertos tienen y cuándo se movieron por última vez). |
+| **Proyectos** | Cada proyecto con sus logros de la semana, la última actividad y un gráfico de 7 días. Toca un proyecto para abrir su **detalle**: historial de logros por mes (con filtro de hitos), edición, finalizarlo (queda en el historial y puedes reactivarlo) o eliminarlo junto con sus logros. Si lo vinculas a un repositorio de GitHub, el detalle muestra sus **issues y PRs abiertos** al día. Permite crear proyectos nuevos, cada uno con su propio color, o **importar tus repositorios de GitHub** como proyectos (ves cuáles están archivados, cuántos issues abiertos tienen y cuándo se movieron por última vez). |
 
 Además: tema claro por defecto con una alternativa oscura, diseño adaptable (barra inferior y hojas en celular; barra lateral y diálogos centrados en pantallas anchas) e inicio de sesión para un solo usuario.
 
@@ -29,7 +29,7 @@ Requisitos: una versión reciente de Node.js, [pnpm](https://pnpm.io) y una cuen
    pnpm install
    ```
 
-2. Crea un proyecto en Supabase, abre el **SQL Editor** y ejecuta [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql).
+2. Crea un proyecto en Supabase, abre el **SQL Editor** y ejecuta, en orden, los archivos de [`supabase/migrations/`](supabase/migrations/): `0001_init.sql`, `0002_github_import.sql` y `0003_project_github_repo.sql`.
 
 3. En Supabase, crea tu usuario en **Authentication → Users → Add user** (marca **Auto Confirm User**) y luego desactiva **Allow new users to sign up** en la configuración de inicio de sesión.
 
