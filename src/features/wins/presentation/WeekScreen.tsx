@@ -6,7 +6,10 @@ import { container } from '@/composition/container';
 import { formatWeekRange } from '@/shared/lib/dates';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
+import { Fab } from '@/shared/ui/Fab';
 import type { WeekSummary } from '../application/getWeekSummary';
+import type { LogWinInput } from '../application/logWin';
+import { AddWinSheet } from './AddWinSheet';
 import { DayHeader } from './DayHeader';
 import { MomentumCard } from './MomentumCard';
 import { WinRow } from './WinRow';
@@ -17,6 +20,7 @@ export function WeekScreen() {
   const { colors, scheme, toggle } = useTheme();
   const [weekOffset, setWeekOffset] = useState(0);
   const [summary, setSummary] = useState<WeekSummary | null>(null);
+  const [adding, setAdding] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -31,6 +35,14 @@ export function WeekScreen() {
   const onToggleMilestone = async (id: string, next: boolean) => {
     await container.toggleMilestone(id, next);
     setSummary(await container.getWeekSummary(weekOffset));
+  };
+
+  const onSaveWin = async (input: LogWinInput) => {
+    await container.logWin(input);
+    // A new win always belongs to the current week.
+    setWeekOffset(0);
+    setSummary(await container.getWeekSummary(0));
+    setAdding(false);
   };
 
   return (
@@ -97,6 +109,14 @@ export function WeekScreen() {
           )}
         </View>
       </ScrollView>
+
+      <Fab onPress={() => setAdding(true)} accessibilityLabel="Add a win" />
+      <AddWinSheet
+        visible={adding}
+        projects={summary ? Object.values(summary.projects) : []}
+        onClose={() => setAdding(false)}
+        onSave={onSaveWin}
+      />
     </SafeAreaView>
   );
 }

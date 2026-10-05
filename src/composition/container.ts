@@ -1,6 +1,8 @@
 import { InMemoryDayClosureRepository } from '@/features/closeout/infrastructure/InMemoryDayClosureRepository';
+import { createListProjects } from '@/features/projects/application/listProjects';
 import { InMemoryProjectRepository } from '@/features/projects/infrastructure/InMemoryProjectRepository';
 import { createGetWeekSummary } from '@/features/wins/application/getWeekSummary';
+import { createLogWin } from '@/features/wins/application/logWin';
 import type { Clock } from '@/features/wins/application/ports';
 import { createToggleMilestone } from '@/features/wins/application/toggleMilestone';
 import { InMemoryWinRepository } from '@/features/wins/infrastructure/InMemoryWinRepository';
@@ -18,4 +20,6 @@ const closures = new InMemoryDayClosureRepository(seed.closures);
 export const container = {
   getWeekSummary: createGetWeekSummary({ wins, projects, closures, clock }),
   toggleMilestone: createToggleMilestone(wins),
+  logWin: createLogWin({ wins, clock }),
+  listProjects: createListProjects(projects),
 };
