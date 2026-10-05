@@ -1,3 +1,4 @@
+import { createCloseDay } from '@/features/closeout/application/closeDay';
 import { InMemoryDayClosureRepository } from '@/features/closeout/infrastructure/InMemoryDayClosureRepository';
 import { createListProjects } from '@/features/projects/application/listProjects';
 import { InMemoryProjectRepository } from '@/features/projects/infrastructure/InMemoryProjectRepository';
@@ -22,4 +23,5 @@ export const container = {
   toggleMilestone: createToggleMilestone(wins),
   logWin: createLogWin({ wins, clock }),
   listProjects: createListProjects(projects),
+  closeDay: createCloseDay({ closures, clock }),
 };

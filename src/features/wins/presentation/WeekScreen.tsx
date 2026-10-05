@@ -3,6 +3,8 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { container } from '@/composition/container';
+import type { CloseDayInput } from '@/features/closeout/application/closeDay';
+import { CloseOutSheet } from '@/features/closeout/presentation/CloseOutSheet';
 import { formatWeekRange } from '@/shared/lib/dates';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
@@ -21,6 +23,7 @@ export function WeekScreen() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [summary, setSummary] = useState<WeekSummary | null>(null);
   const [adding, setAdding] = useState(false);
+  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -44,6 +47,14 @@ export function WeekScreen() {
     setSummary(await container.getWeekSummary(0));
     setAdding(false);
   };
+
+  const onCloseDay = async (input: CloseDayInput) => {
+    await container.closeDay(input);
+    setSummary(await container.getWeekSummary(weekOffset));
+    setClosing(false);
+  };
+
+  const today = summary?.days.find((day) => day.isToday);
 
   return (
     <SafeAreaView edges={['top']} style={[styles.screen, { backgroundColor: colors.bg }]}>
@@ -82,7 +93,16 @@ export function WeekScreen() {
                 }))}
               />
 
-              <Text style={[type.title, { color: colors.text }]}>What moved forward</Text>
+              <View style={styles.sectionHeader}>
+                <Text style={[type.title, { color: colors.text }]}>What moved forward</Text>
+                {today && (
+                  <Pressable onPress={() => setClosing(true)} accessibilityRole="button" style={styles.closeLink}>
+                    <Text style={[type.bodySmall, { color: colors.accentStrong, fontWeight: '600' }]}>
+                      Close out today →
+                    </Text>
+                  </Pressable>
+                )}
+              </View>
 
               {summary.days.map((day) => (
                 <View key={day.key} style={styles.day}>
@@ -111,6 +131,17 @@ export function WeekScreen() {
       </ScrollView>
 
       <Fab onPress={() => setAdding(true)} accessibilityLabel="Add a win" />
+      <CloseOutSheet
+        visible={closing}
+        today={today}
+        projects={summary?.projects ?? {}}
+        onClose={() => setClosing(false)}
+        onAddWin={() => {
+          setClosing(false);
+          setAdding(true);
+        }}
+        onSave={onCloseDay}
+      />
       <AddWinSheet
         visible={adding}
         projects={summary ? Object.values(summary.projects) : []}
@@ -150,6 +181,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
+  closeLink: { minHeight: 44, justifyContent: 'center' },
   day: { gap: spacing.sm },
   empty: { borderRadius: radius.md, borderWidth: 1, padding: spacing.lg },
 });

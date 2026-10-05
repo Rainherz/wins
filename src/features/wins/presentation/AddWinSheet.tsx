@@ -1,21 +1,11 @@
 import { useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Switch,
-  Text,
-  TextInput,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 
 import type { Project } from '@/features/projects/domain/project';
 import { ProjectSelect } from '@/features/projects/presentation/ProjectSelect';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
+import { Sheet } from '@/shared/ui/Sheet';
 import type { LogWinInput } from '../application/logWin';
 import { MAX_TITLE_LENGTH } from '../domain/win';
 
@@ -26,29 +16,11 @@ type Props = {
   onSave: (input: LogWinInput) => Promise<void>;
 };
 
-const DESKTOP_BREAKPOINT = 768;
-
 export function AddWinSheet({ visible, projects, onClose, onSave }: Props) {
-  const { colors } = useTheme();
-  const { width } = useWindowDimensions();
-  const isDesktop = width >= DESKTOP_BREAKPOINT;
-
   return (
-    <Modal visible={visible} transparent animationType={isDesktop ? 'fade' : 'slide'} onRequestClose={onClose}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={[styles.overlay, isDesktop ? styles.overlayCenter : styles.overlayBottom]}>
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel="Close" />
-        <View
-          style={[
-            styles.sheet,
-            isDesktop ? styles.sheetDesktop : styles.sheetMobile,
-            { backgroundColor: colors.surface, borderColor: colors.border },
-          ]}>
-          <Form projects={projects} onClose={onClose} onSave={onSave} />
-        </View>
-      </KeyboardAvoidingView>
-    </Modal>
+    <Sheet visible={visible} onClose={onClose}>
+      <Form projects={projects} onClose={onClose} onSave={onSave} />
+    </Sheet>
   );
 }
 
@@ -127,12 +99,6 @@ function Form({ projects, onClose, onSave }: Omit<Props, 'visible'>) {
 }
 
 const styles = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' },
-  overlayBottom: { justifyContent: 'flex-end' },
-  overlayCenter: { justifyContent: 'center', alignItems: 'center' },
-  sheet: { borderWidth: 1, padding: spacing.xl },
-  sheetMobile: { borderTopLeftRadius: radius.lg, borderTopRightRadius: radius.lg, width: '100%' },
-  sheetDesktop: { borderRadius: radius.lg, width: 480 },
   form: { gap: spacing.lg },
   titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   titleBlock: { gap: spacing.xs },

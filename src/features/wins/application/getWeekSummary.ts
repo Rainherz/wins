@@ -12,6 +12,7 @@ export type DaySummary = {
   key: string;
   wins: Win[];
   mood?: Mood;
+  stuckNote?: string;
   isToday: boolean;
   isFuture: boolean;
 };
@@ -46,7 +47,7 @@ export const createGetWeekSummary =
       closures.listByRange(weekStart, weekEnd),
     ]);
 
-    const moods = new Map(weekClosures.map((closure) => [closure.day, closure.mood]));
+    const closureByDay = new Map(weekClosures.map((closure) => [closure.day, closure]));
 
     const days: DaySummary[] = Array.from({ length: 7 }, (_, index) => {
       const date = addDays(weekStart, index);
@@ -57,7 +58,8 @@ export const createGetWeekSummary =
         wins: weekWins
           .filter((win) => dayKey(win.achievedAt) === key)
           .sort((a, b) => b.achievedAt.getTime() - a.achievedAt.getTime()),
-        mood: moods.get(key),
+        mood: closureByDay.get(key)?.mood,
+        stuckNote: closureByDay.get(key)?.stuckNote,
         isToday: isSameDay(date, now),
         isFuture: date.getTime() > now.getTime() && !isSameDay(date, now),
       };

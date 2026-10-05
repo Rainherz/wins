@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { Mood } from '@/features/closeout/domain/dayClosure';
+import { moodColor, moodMeta } from '@/features/closeout/presentation/moodMeta';
 import { formatShortDate, formatWeekday } from '@/shared/lib/dates';
 import { spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
@@ -12,12 +13,8 @@ type Props = {
   isFuture: boolean;
 };
 
-const MOOD_GLYPH: Record<Mood, string> = { good: ':)', 'so-so': ':|', tough: ':(' };
-const MOOD_LABEL: Record<Mood, string> = { good: 'Good', 'so-so': 'So-so', tough: 'Tough' };
-
 export function DayHeader({ date, count, mood, isFuture }: Props) {
   const { colors } = useTheme();
-  const moodColor = mood ? colors.mood[mood === 'so-so' ? 'soSo' : mood] : undefined;
 
   return (
     <View style={styles.row}>
@@ -33,11 +30,12 @@ export function DayHeader({ date, count, mood, isFuture }: Props) {
       {isFuture ? (
         <Text style={[type.label, { color: colors.textMuted }]}>Still open</Text>
       ) : (
-        mood &&
-        moodColor && (
-          <View style={styles.mood} accessibilityLabel={`Mood: ${MOOD_LABEL[mood]}`}>
-            <Text style={[type.label, { color: moodColor }]}>{MOOD_GLYPH[mood]}</Text>
-            <Text style={[type.label, { color: moodColor }]}>{MOOD_LABEL[mood].toUpperCase()}</Text>
+        mood && (
+          <View style={styles.mood} accessibilityLabel={`Mood: ${moodMeta(mood).label}`}>
+            <Text style={[type.label, { color: moodColor(colors, mood) }]}>{moodMeta(mood).glyph}</Text>
+            <Text style={[type.label, { color: moodColor(colors, mood) }]}>
+              {moodMeta(mood).label.toUpperCase()}
+            </Text>
           </View>
         )
       )}
