@@ -1,7 +1,6 @@
 # Wins — Architecture
 
-Hexagonal (ports and adapters), screaming structure by feature, TDD for domain and
-application layers. Backend: Supabase. Client: React Native with Expo, targeting
+Hexagonal (ports and adapters), screaming structure by feature. Backend: Supabase. Client: React Native with Expo, targeting
 iOS, Android and web from one codebase.
 
 ## Stack
@@ -12,7 +11,6 @@ iOS, Android and web from one codebase.
 | Routing            | expo-router                              | Routes stay thin, no logic.               |
 | Backend            | Supabase (Postgres, Auth, RLS)           | Reached only through adapters.            |
 | Server state       | TanStack Query                           | Wraps use cases, handles cache/loading.   |
-| Tests              | Jest (jest-expo) + React Native Testing Library | Domain tests are plain Jest, no RN.|
 | Styling            | Theme tokens from `docs/design-system.md`| One `theme` module, light and dark.       |
 
 ## Layers and dependency rule
@@ -116,14 +114,14 @@ day_closures(user_id, day date, mood, stuck_note, created_at)  -- unique (user_i
 - Session persistence uses a storage adapter with `autoRefreshToken: true`,
   `persistSession: true`, `detectSessionInUrl: false`.
 
-## Testing strategy (strict TDD)
+## Testing
 
-1. **Domain**: pure Jest tests written first (week range, aggregation, rules).
-2. **Application**: use cases tested with in-memory fakes of the ports.
-3. **Infrastructure**: adapter tests against a Supabase local stack or mocked client.
-4. **Presentation**: Testing Library for key flows (add a win, close the day).
+Automated tests are out of scope for this first version (a course assignment).
+Quality gate: `pnpm typecheck` and `pnpm lint`, plus manual checks of the main flows
+(add a win, close the day, switch theme).
 
-Red, green, refactor. No use case is written without a failing test first.
+The hexagonal split keeps the domain and use cases free of React and Supabase, so
+unit tests (Jest, in-memory fakes of the ports) can be added later without refactoring.
 
 ## Out of MVP
 
