@@ -27,6 +27,7 @@ export function WinRow({ win, project, onToggleMilestone }: Props) {
         <Text style={[type.body, { color: colors.text }]}>{win.title}</Text>
         <View style={styles.meta}>
           <Text style={[type.bodySmall, { color: colors.textMuted }]}>{project?.name ?? 'Sin proyecto'}</Text>
+          {win.externalId && <Text style={[type.bodySmall, { color: colors.textMuted }]}>· GitHub</Text>}
           {win.isMilestone && (
             <View style={[styles.chip, { backgroundColor: colors.accent }]}>
               <Text style={[type.label, { color: colors.onAccent }]}>

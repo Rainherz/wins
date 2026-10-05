@@ -10,6 +10,8 @@ export interface WinRepository {
   listByRange(from: Date, to: Date): Promise<Win[]>;
   countByRange(from: Date, to: Date): Promise<number>;
   setMilestone(id: string, isMilestone: boolean): Promise<void>;
+  /** External ids of every imported win, used to avoid importing the same item twice. */
+  listExternalIds(): Promise<string[]>;
 }
 
 export interface Clock {

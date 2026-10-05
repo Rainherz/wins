@@ -6,7 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { container } from '@/composition/container';
 import type { CloseDayInput } from '@/features/closeout/application/closeDay';
 import { CloseOutSheet } from '@/features/closeout/presentation/CloseOutSheet';
-import { formatWeekRange } from '@/shared/lib/dates';
+import { GithubImportSheet } from '@/features/github/presentation/GithubImportSheet';
+import { addDays, formatWeekRange } from '@/shared/lib/dates';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
 import { Fab } from '@/shared/ui/Fab';
@@ -26,6 +27,7 @@ export function WeekScreen() {
   const [summary, setSummary] = useState<WeekSummary | null>(null);
   const [adding, setAdding] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [importing, setImporting] = useState(false);
 
   // Tabs stay mounted, so reload on focus to pick up projects created elsewhere.
   useFocusEffect(
@@ -57,6 +59,11 @@ export function WeekScreen() {
     await container.closeDay(input);
     setSummary(await container.getWeekSummary(weekOffset));
     setClosing(false);
+  };
+
+  const onImported = async () => {
+    setSummary(await container.getWeekSummary(weekOffset));
+    setImporting(false);
   };
 
   const today = summary?.days.find((day) => day.isToday);
@@ -98,10 +105,19 @@ export function WeekScreen() {
                 }))}
               />
 
-              <View style={styles.sectionHeader}>
-                <Text style={[type.title, { color: colors.text }]}>Lo que avanzó</Text>
+              <Text style={[type.title, { color: colors.text }]}>Lo que avanzó</Text>
+              <View style={styles.actions}>
+                <Pressable
+                  onPress={() => setImporting(true)}
+                  accessibilityRole="button"
+                  style={[styles.action, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                  <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>Importar de GitHub</Text>
+                </Pressable>
                 {today && (
-                  <Pressable onPress={() => setClosing(true)} accessibilityRole="button" style={styles.closeLink}>
+                  <Pressable
+                    onPress={() => setClosing(true)}
+                    accessibilityRole="button"
+                    style={[styles.action, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                     <Text style={[type.bodySmall, { color: colors.accentStrong, fontWeight: '600' }]}>
                       Cerrar el día →
                     </Text>
@@ -147,6 +163,15 @@ export function WeekScreen() {
         }}
         onSave={onCloseDay}
       />
+      {summary && (
+        <GithubImportSheet
+          visible={importing}
+          from={summary.weekStart}
+          to={addDays(summary.weekStart, 7)}
+          onClose={() => setImporting(false)}
+          onImported={onImported}
+        />
+      )}
       <AddWinSheet
         visible={adding}
         projects={summary ? Object.values(summary.projects) : []}
@@ -165,8 +190,14 @@ const styles = StyleSheet.create({
   titleBlock: { flexShrink: 1, gap: spacing.xs },
   title: { fontSize: 32, lineHeight: 36 },
   controls: { flexDirection: 'row', gap: spacing.sm },
-  sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
-  closeLink: { minHeight: 44, justifyContent: 'center' },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  action: {
+    minHeight: 44,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.md,
+    borderWidth: 1,
+  },
   day: { gap: spacing.sm },
   empty: { borderRadius: radius.md, borderWidth: 1, padding: spacing.lg },
 });
