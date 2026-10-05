@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 import type { NewWin, WinPatch, WinRepository } from '../application/ports';
+import { readAllPages } from '@/shared/lib/readAllPages';
 import type { Win } from '../domain/win';
 
 type WinRow = {
@@ -44,36 +45,45 @@ export class SupabaseWinRepository implements WinRepository {
   }
 
   async listAll() {
-    const { data, error } = await this.client
-      .from('wins')
-      .select()
-      .order('achieved_at', { ascending: false })
-      .returns<WinRow[]>();
-    if (error) throw new Error(error.message);
-    return data.map(toWin);
+    const rows = await readAllPages<WinRow>((from, to) =>
+      this.client
+        .from('wins')
+        .select()
+        .order('achieved_at', { ascending: false })
+        .order('id')
+        .range(from, to)
+        .returns<WinRow[]>(),
+    );
+    return rows.map(toWin);
   }
 
   async listByProject(projectId: string) {
-    const { data, error } = await this.client
-      .from('wins')
-      .select()
-      .eq('project_id', projectId)
-      .order('achieved_at', { ascending: false })
-      .returns<WinRow[]>();
-    if (error) throw new Error(error.message);
-    return data.map(toWin);
+    const rows = await readAllPages<WinRow>((from, to) =>
+      this.client
+        .from('wins')
+        .select()
+        .eq('project_id', projectId)
+        .order('achieved_at', { ascending: false })
+        .order('id')
+        .range(from, to)
+        .returns<WinRow[]>(),
+    );
+    return rows.map(toWin);
   }
 
   async listByRange(from: Date, to: Date) {
-    const { data, error } = await this.client
-      .from('wins')
-      .select()
-      .gte('achieved_at', from.toISOString())
-      .lt('achieved_at', to.toISOString())
-      .order('achieved_at', { ascending: false })
-      .returns<WinRow[]>();
-    if (error) throw new Error(error.message);
-    return data.map(toWin);
+    const rows = await readAllPages<WinRow>((start, end) =>
+      this.client
+        .from('wins')
+        .select()
+        .gte('achieved_at', from.toISOString())
+        .lt('achieved_at', to.toISOString())
+        .order('achieved_at', { ascending: false })
+        .order('id')
+        .range(start, end)
+        .returns<WinRow[]>(),
+    );
+    return rows.map(toWin);
   }
 
   async countByRange(from: Date, to: Date) {

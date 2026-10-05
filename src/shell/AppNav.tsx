@@ -12,9 +12,11 @@ import { Icon, type IconName } from '@/shared/ui/Icon';
 import { Text } from '@/shared/ui/Text';
 import { useCapture } from './CaptureProvider';
 
-const ITEMS: Record<string, { label: string; icon: IconName; iconActive: IconName }> = {
-  week: { label: 'Semana', icon: 'calendar-week', iconActive: 'calendar-week' },
-  projects: { label: 'Proyectos', icon: 'folder-outline', iconActive: 'folder' },
+/** `inBar` items also appear in the phone's bottom bar, which has room for two plus the add button. */
+const ITEMS: Record<string, { label: string; icon: IconName; iconActive: IconName; inBar: boolean }> = {
+  week: { label: 'Semana', icon: 'calendar-week', iconActive: 'calendar-week', inBar: true },
+  activity: { label: 'Actividad', icon: 'calendar-month-outline', iconActive: 'calendar-month', inBar: false },
+  projects: { label: 'Proyectos', icon: 'folder-outline', iconActive: 'folder', inBar: true },
 };
 
 export function AppNav(props: BottomTabBarProps) {
@@ -107,7 +109,7 @@ function BottomBar(props: BottomTabBarProps) {
   const { colors } = useTheme();
   const { openAddWin } = useCapture();
   const insets = useSafeAreaInsets();
-  const items = useNavItems(props);
+  const items = useNavItems(props).filter((item) => item.inBar);
 
   const tab = (item: (typeof items)[number]) => (
     <Pressable

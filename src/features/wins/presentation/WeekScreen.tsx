@@ -1,4 +1,4 @@
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -114,6 +114,7 @@ export function WeekScreen() {
 
   const actions = summary && (
     <View style={styles.actions}>
+      <Button label="Ver actividad" icon="calendar-month-outline" variant="secondary" onPress={() => router.navigate('/activity')} />
       <Button label="Importar logros" icon="github" variant="secondary" onPress={() => setImporting(true)} />
       {today && (
         <Button

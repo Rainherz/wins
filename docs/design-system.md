@@ -110,6 +110,8 @@ glyphs or emoji as icons.
 | `Markdown` | Draws Markdown with the app's own components and type scale (headings, lists, tables, code, quotes, links). Raw HTML and images are skipped on purpose: READMEs often open with centered logos and badges that would show as broken markup. |
 | `ReadmePanel` | The project's README in a card, collapsed to a preview with "show all". Stays out of the way when GitHub is not connected, since the pending panel already asks for that. |
 | `PendingWorkPanel` | Open issues and PRs of a project's GitHub repository, fetched live: PR and issue icons, draft state, labels, age, and a clear way out for every failure (not connected, rejected token, no access). |
+| `ActivityHeatmap` | Contribution-style grid, Monday-first week columns. Five levels from `surfaceMuted` to the full accent; the cell size fits the width and only scrolls (starting on the latest weeks) when 9px cells still do not fit. Every cell has an aria-label with date and count. |
+| `DayDetail` / `EffortList` | The selected day's wins, mood and a "view that week" jump; per-project effort bars (top 6, then "and N more"). |
 | `ProjectCard`    | Colored avatar, name, description, "Activo hace N días", this-week count and 7-day bars. |
 | `ProjectSelect`  | Chips with the project color. Replaces the native select. |
 | `AppNav`         | Sidebar or bottom bar depending on width. |

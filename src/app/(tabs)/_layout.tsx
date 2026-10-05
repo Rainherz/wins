@@ -19,6 +19,7 @@ export default function TabsLayout() {
           sceneStyle: { backgroundColor: colors.bg },
         }}>
         <Tabs.Screen name="week" options={{ title: 'Semana' }} />
+        <Tabs.Screen name="activity" options={{ title: 'Actividad' }} />
         <Tabs.Screen name="projects" options={{ title: 'Proyectos' }} />
         {/* Opened from a project card. Not a tab, so it stays out of the navigation. */}
         <Tabs.Screen name="project/[id]" options={{ href: null }} />

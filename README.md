@@ -13,6 +13,7 @@ Las tareas terminadas desaparecen. Al final de la semana parece que nada avanzó
 | Pantalla | Qué hace |
 |----------|----------|
 | **Semana** | Total de logros y proyectos tocados, comparación con la semana pasada, una barra por día y cada logro agrupado por día con el ánimo de esa jornada. Marca un logro con la estrella para convertirlo en hito. Con **Importar logros** traes tus PRs fusionados e issues cerrados de GitHub y eliges cuáles contar. |
+| **Actividad** | Un mapa de calor de 3, 6 o 12 meses (un cuadro por día, más intenso cuanto más lograste), con el resumen del periodo y los proyectos donde pusiste más esfuerzo. Toca un día para ver sus logros y su ánimo, y salta a esa semana. Se abre desde **Ver actividad** en Semana o desde la barra lateral. |
 | **Agregar un logro** | Registra lo que terminaste en pocos segundos: texto, día (hoy o cualquiera de los últimos 7), proyecto y, si quieres, hito. Toca un logro para editarlo o eliminarlo. |
 | **Cerrar el día** | Elige cómo se sintió el día (bien, regular, difícil), revisa los logros de hoy y deja una nota opcional sobre lo que se trabó. |
 | **Proyectos** | Cada proyecto con sus logros de la semana, la última actividad y un gráfico de 7 días. Toca un proyecto para abrir su **detalle**: historial de logros por mes (con filtro de hitos), edición, finalizarlo (queda en el historial y puedes reactivarlo) o eliminarlo junto con sus logros. Si lo vinculas a un repositorio de GitHub, el detalle muestra el **README del repositorio** (para entender de qué trata el proyecto) y sus **issues y PRs abiertos** al día. Permite crear proyectos nuevos, cada uno con su propio color, o **importar tus repositorios de GitHub** como proyectos (ves cuáles están archivados, cuántos issues abiertos tienen y cuándo se movieron por última vez). |
@@ -78,7 +79,7 @@ infrastructure → application (implementa sus puertos)
 ```
 src/
 ├── app/            # Rutas de Expo Router (delgadas)
-├── features/       # wins, projects, closeout, auth
+├── features/       # wins, projects, closeout, activity, auth
 │   └── <feature>/{domain,application,infrastructure,presentation}
 ├── shared/         # tokens de tema, componentes base (Text, Button, Icon…), utilidades
 ├── shell/          # navegación (barra lateral / inferior) y captura de logros

@@ -1,3 +1,4 @@
+import { createGetActivityMap } from '@/features/activity/application/getActivityMap';
 import { createSignIn } from '@/features/auth/application/signIn';
 import { SupabaseAuthAdapter } from '@/features/auth/infrastructure/SupabaseAuthAdapter';
 import { createCloseDay } from '@/features/closeout/application/closeDay';
@@ -56,6 +57,7 @@ export const container = {
   deleteProject: createDeleteProject({ projects, wins }),
   getProjectsOverview: createGetProjectsOverview({ wins, projects, clock }),
   getProjectDetail: createGetProjectDetail({ wins, projects, clock }),
+  getActivityMap: createGetActivityMap({ wins, projects, closures, clock }),
   connectGithub: createConnectGithub({ github, connections: githubConnections }),
   disconnectGithub: createDisconnectGithub(githubConnections),
   getImportSuggestions: createGetImportSuggestions({ github, connections: githubConnections, wins, projects }),

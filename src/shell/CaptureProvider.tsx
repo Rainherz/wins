@@ -12,6 +12,8 @@ type CaptureValue = {
   revision: number;
   /** Weeks back from the current one where the last saved win landed (0 = this week). */
   savedWeekOffset: number;
+  /** Makes the Week screen show the week `offset` weeks back (0 = this week). */
+  showWeek: (offset: number) => void;
 };
 
 const CaptureContext = createContext<CaptureValue | null>(null);
@@ -31,6 +33,8 @@ export function CaptureProvider({ children }: { children: ReactNode }) {
     setOpen(true);
   };
 
+  const showWeek = (offset: number) => setSaved((current) => ({ revision: current.revision + 1, weekOffset: offset }));
+
   const onSave = async (values: WinFormValues) => {
     await container.logWin(values);
     setSaved((current) => ({
@@ -41,7 +45,7 @@ export function CaptureProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <CaptureContext.Provider value={{ openAddWin, revision: saved.revision, savedWeekOffset: saved.weekOffset }}>
+    <CaptureContext.Provider value={{ openAddWin, revision: saved.revision, savedWeekOffset: saved.weekOffset, showWeek }}>
       {children}
       <WinFormSheet visible={open} projects={projects} onClose={() => setOpen(false)} onSave={onSave} />
     </CaptureContext.Provider>

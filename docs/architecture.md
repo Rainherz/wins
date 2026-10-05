@@ -38,6 +38,7 @@ wins/
 │   ├── app/                     # expo-router routes (thin)
 │   │   ├── _layout.tsx
 │   │   ├── (tabs)/week.tsx
+│   │   ├── (tabs)/activity.tsx
 │   │   ├── (tabs)/projects.tsx
 │   │   └── sign-in.tsx
 │   ├── features/
@@ -56,6 +57,9 @@ wins/
 │   │   │   ├── application/     # CloseDay, ports
 │   │   │   ├── infrastructure/
 │   │   │   └── presentation/    # CloseOutSheet, MoodOption
+│   │   ├── activity/
+│   │   │   ├── application/     # GetActivityMap (read-only, composes wins, projects and closures)
+│   │   │   └── presentation/    # ActivityScreen, ActivityHeatmap, DayDetail, EffortList
 │   │   └── auth/
 │   │       ├── domain/
 │   │       ├── application/     # SignIn, AuthPort
