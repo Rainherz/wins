@@ -1,7 +1,8 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
+import { Text } from '@/shared/ui/Text';
 import type { Project } from '../domain/project';
 
 type Props = {
@@ -17,22 +18,21 @@ export function ProjectSelect({ projects, value, onChange }: Props) {
     <View style={styles.wrap} accessibilityRole="radiogroup">
       {projects.map((project) => {
         const selected = project.id === value;
-        const color = colors.projects[project.colorSlot];
         return (
           <Pressable
             key={project.id}
             onPress={() => onChange(project.id)}
             accessibilityRole="radio"
             accessibilityState={{ selected }}
-            style={[
+            style={({ hovered }) => [
               styles.chip,
               {
-                backgroundColor: selected ? colors.accentSoft : colors.surface,
+                backgroundColor: selected ? colors.accentSoft : hovered ? colors.surfaceMuted : colors.surface,
                 borderColor: selected ? colors.accent : colors.border,
               },
             ]}>
-            <View style={[styles.dot, { backgroundColor: color }]} />
-            <Text style={[type.bodySmall, { color: colors.text, fontWeight: selected ? '600' : '400' }]}>
+            <View style={[styles.dot, { backgroundColor: colors.projects[project.colorSlot] }]} />
+            <Text style={[type.bodySmall, { color: colors.text, fontWeight: selected ? '600' : '500' }]}>
               {project.name}
             </Text>
           </Pressable>
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    minHeight: 44,
+    minHeight: 40,
     paddingHorizontal: spacing.md,
     borderRadius: radius.full,
     borderWidth: 1,

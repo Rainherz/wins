@@ -1,12 +1,17 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import type { Project } from '@/features/projects/domain/project';
 import type { DaySummary } from '@/features/wins/application/getWeekSummary';
 import { formatShortDate, formatWeekday } from '@/shared/lib/dates';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
+import { Button } from '@/shared/ui/Button';
+import { Icon } from '@/shared/ui/Icon';
 import { Sheet } from '@/shared/ui/Sheet';
+import { SheetHeader } from '@/shared/ui/SheetHeader';
+import { Text } from '@/shared/ui/Text';
+import { TextField } from '@/shared/ui/TextField';
 import type { CloseDayInput } from '../application/closeDay';
 import type { Mood } from '../domain/dayClosure';
 import { MOODS, moodColor } from './moodMeta';
@@ -45,38 +50,31 @@ function Form({ today, projects, onClose, onAddWin, onSave }: Omit<Props, 'visib
 
   return (
     <View style={styles.form}>
-      <View style={styles.titleRow}>
-        <View style={styles.titleBlock}>
-          <Text style={[type.label, { color: colors.textMuted }]}>
-            {`${formatWeekday(today.date)}, ${formatShortDate(today.date)}`.toUpperCase()}
-          </Text>
-          <Text style={[type.title, { color: colors.text }]}>¿Cómo fue hoy?</Text>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>No hay respuesta correcta. Solo observa cómo se sintió.</Text>
-        </View>
-        <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Cerrar" style={styles.close}>
-          <Text style={{ fontSize: 22, color: colors.textMuted }}>×</Text>
-        </Pressable>
-      </View>
+      <SheetHeader
+        title="¿Cómo fue hoy?"
+        description={`${formatWeekday(today.date)}, ${formatShortDate(today.date)}. No hay respuesta correcta.`}
+        onClose={onClose}
+      />
 
       <View style={styles.moods} accessibilityRole="radiogroup">
         {MOODS.map((item) => {
           const selected = item.value === mood;
-          const color = moodColor(colors, item.value);
           return (
             <Pressable
               key={item.value}
               onPress={() => setMood(item.value)}
               accessibilityRole="radio"
               accessibilityState={{ selected }}
-              style={[
+              style={({ hovered }) => [
                 styles.mood,
                 {
-                  backgroundColor: selected ? colors.accentSoft : colors.surface,
+                  backgroundColor: selected ? colors.accentSoft : hovered ? colors.surfaceMuted : colors.surface,
                   borderColor: selected ? colors.accent : colors.border,
                 },
               ]}>
-              <Text style={[type.title, { color }]}>{item.glyph}</Text>
+              <Icon name={item.icon} size={32} color={moodColor(colors, item.value)} />
               <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>{item.label}</Text>
+              <Text style={[type.caption, { color: colors.textMuted }]}>{item.hint}</Text>
             </Pressable>
           );
         })}
@@ -85,7 +83,9 @@ function Form({ today, projects, onClose, onAddWin, onSave }: Omit<Props, 'visib
       <View style={[styles.wins, { backgroundColor: colors.surfaceMuted }]}>
         <View style={styles.winsHeader}>
           <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>Logros de hoy</Text>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>{today.wins.length} {today.wins.length === 1 ? 'registrado' : 'registrados'}</Text>
+          <Text style={[type.bodySmall, { color: colors.textMuted }]}>
+            {today.wins.length} {today.wins.length === 1 ? 'registrado' : 'registrados'}
+          </Text>
         </View>
         {today.wins.length === 0 && (
           <Text style={[type.bodySmall, { color: colors.textMuted }]}>Aún no hay nada registrado. Está bien.</Text>
@@ -95,82 +95,47 @@ function Form({ today, projects, onClose, onAddWin, onSave }: Omit<Props, 'visib
           return (
             <View key={win.id} style={styles.winRow}>
               <View
-                style={[
-                  styles.dot,
-                  { backgroundColor: project ? colors.projects[project.colorSlot] : colors.textMuted },
-                ]}
+                style={[styles.dot, { backgroundColor: project ? colors.projects[project.colorSlot] : colors.textMuted }]}
               />
               <Text style={[type.bodySmall, styles.winTitle, { color: colors.text }]}>{win.title}</Text>
             </View>
           );
         })}
-        <Pressable onPress={onAddWin} accessibilityRole="button" style={styles.link}>
-          <Text style={[type.bodySmall, { color: colors.accentStrong, fontWeight: '600' }]}>+ Agregar otro logro</Text>
-        </Pressable>
+        <Button label="Agregar otro logro" icon="plus" variant="quiet" onPress={onAddWin} flush />
       </View>
 
       {showNote ? (
-        <View style={styles.field}>
-          <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>¿Qué se trabó?</Text>
-          <TextInput
-            value={note}
-            onChangeText={setNote}
-            placeholder="Escríbelo, así mañana empiezas de cero…"
-            placeholderTextColor={colors.textMuted}
-            multiline
-            style={[
-              type.body,
-              styles.input,
-              { color: colors.text, backgroundColor: colors.bg, borderColor: colors.border },
-            ]}
-          />
-        </View>
+        <TextField
+          label="¿Qué se trabó?"
+          value={note}
+          onChangeText={setNote}
+          placeholder="Escríbelo, así mañana empiezas de cero…"
+          multiline
+        />
       ) : (
-        <Pressable onPress={() => setShowNote(true)} accessibilityRole="button" style={styles.link}>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>+ Agregar una nota opcional sobre lo que se trabó</Text>
-        </Pressable>
+        <Button label="Agregar una nota sobre lo que se trabó" icon="note-text-outline" variant="quiet" onPress={() => setShowNote(true)} flush />
       )}
 
-      <Pressable
-        onPress={save}
-        disabled={!canSave}
-        accessibilityRole="button"
-        accessibilityState={{ disabled: !canSave }}
-        style={[styles.save, { backgroundColor: colors.accent, opacity: canSave ? 1 : 0.4 }]}>
-        <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>Cerrar el día</Text>
-      </Pressable>
+      <Button label="Cerrar el día" icon="weather-night" onPress={save} disabled={!canSave} block />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  form: { gap: spacing.lg },
-  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  titleBlock: { flex: 1, gap: spacing.xs },
-  close: { minWidth: 44, minHeight: 44, alignItems: 'flex-end' },
+  form: { gap: spacing.xl },
   moods: { flexDirection: 'row', gap: spacing.sm },
   mood: {
     flex: 1,
-    minHeight: 80,
     alignItems: 'center',
-    justifyContent: 'center',
     gap: spacing.xs,
-    borderRadius: radius.md,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.lg,
     borderWidth: 1,
   },
-  wins: { borderRadius: radius.md, padding: spacing.md, gap: spacing.sm },
+  wins: { borderRadius: radius.lg, padding: spacing.lg, gap: spacing.sm },
   winsHeader: { flexDirection: 'row', justifyContent: 'space-between' },
   winRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   winTitle: { flex: 1 },
   dot: { width: 10, height: 10, borderRadius: radius.full },
-  link: { minHeight: 44, justifyContent: 'center' },
-  field: { gap: spacing.sm },
-  input: {
-    minHeight: 80,
-    textAlignVertical: 'top',
-    padding: spacing.md,
-    borderRadius: radius.md,
-    borderWidth: 1,
-  },
-  save: { minHeight: 48, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center' },
 });

@@ -1,0 +1,21 @@
+/* Web-only: the browser surfaces the design system does not draw. */
+
+::selection {
+  background: rgba(238, 138, 62, 0.3);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(107, 102, 94, 0.35) transparent;
+}
+
+:focus-visible {
+  outline: 2px solid #d9742a;
+  outline-offset: 2px;
+}
+
+html,
+body {
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}

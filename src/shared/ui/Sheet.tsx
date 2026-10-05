@@ -21,7 +21,7 @@ type Props = {
 
 const DESKTOP_BREAKPOINT = 768;
 
-/** Bottom sheet on mobile, centered modal on wide screens. Children unmount when hidden. */
+/** Bottom sheet on mobile, centered dialog on wide screens. Children unmount when hidden. */
 export function Sheet({ visible, onClose, children }: Props) {
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
@@ -37,8 +37,9 @@ export function Sheet({ visible, onClose, children }: Props) {
           style={[
             styles.sheet,
             isDesktop ? styles.sheetDesktop : styles.sheetMobile,
-            { backgroundColor: colors.surface, borderColor: colors.border },
+            { backgroundColor: colors.surface, boxShadow: colors.shadowRaised },
           ]}>
+          {!isDesktop && <View style={[styles.handle, { backgroundColor: colors.border }]} />}
           <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
             {children}
           </ScrollView>
@@ -49,11 +50,12 @@ export function Sheet({ visible, onClose, children }: Props) {
 }
 
 const styles = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' },
+  overlay: { flex: 1, backgroundColor: 'rgba(31, 30, 27, 0.45)' },
   overlayBottom: { justifyContent: 'flex-end' },
   overlayCenter: { justifyContent: 'center', alignItems: 'center' },
-  sheet: { borderWidth: 1, maxHeight: '90%' },
-  sheetMobile: { borderTopLeftRadius: radius.lg, borderTopRightRadius: radius.lg, width: '100%' },
-  sheetDesktop: { borderRadius: radius.lg, width: 480 },
-  content: { padding: spacing.xl },
+  sheet: { maxHeight: '90%' },
+  sheetMobile: { borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, width: '100%' },
+  sheetDesktop: { borderRadius: radius.xl, width: 480 },
+  handle: { alignSelf: 'center', width: 40, height: 4, borderRadius: radius.full, marginTop: spacing.sm },
+  content: { padding: spacing.xl, paddingTop: spacing.lg },
 });

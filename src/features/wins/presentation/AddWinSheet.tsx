@@ -1,11 +1,16 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Switch, View } from 'react-native';
 
 import type { Project } from '@/features/projects/domain/project';
 import { ProjectSelect } from '@/features/projects/presentation/ProjectSelect';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
+import { Button } from '@/shared/ui/Button';
+import { Icon } from '@/shared/ui/Icon';
 import { Sheet } from '@/shared/ui/Sheet';
+import { SheetHeader } from '@/shared/ui/SheetHeader';
+import { Text } from '@/shared/ui/Text';
+import { TextField } from '@/shared/ui/TextField';
 import type { LogWinInput } from '../application/logWin';
 import { MAX_TITLE_LENGTH } from '../domain/win';
 
@@ -40,36 +45,20 @@ function Form({ projects, onClose, onSave }: Omit<Props, 'visible'>) {
 
   return (
     <View style={styles.form}>
-      <View style={styles.titleRow}>
-        <View style={styles.titleBlock}>
-          <Text style={[type.label, { color: colors.textMuted }]}>CAPTURA EL MOMENTO</Text>
-          <Text style={[type.title, { color: colors.text }]}>Agregar un logro</Text>
-        </View>
-        <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Cerrar" style={styles.close}>
-          <Text style={{ fontSize: 22, color: colors.textMuted }}>×</Text>
-        </Pressable>
-      </View>
+      <SheetHeader title="Agregar un logro" description="Lo que terminaste, por pequeño que sea." onClose={onClose} />
+
+      <TextField
+        label="¿Qué terminaste?"
+        value={title}
+        onChangeText={setTitle}
+        placeholder="Hasta lo pequeño cuenta…"
+        multiline
+        autoFocus
+        maxLength={MAX_TITLE_LENGTH}
+      />
 
       <View style={styles.field}>
-        <Text style={[type.bodySmall, styles.fieldLabel, { color: colors.text }]}>¿Qué terminaste?</Text>
-        <TextInput
-          value={title}
-          onChangeText={setTitle}
-          placeholder="Hasta lo pequeño cuenta…"
-          placeholderTextColor={colors.textMuted}
-          multiline
-          autoFocus
-          maxLength={MAX_TITLE_LENGTH}
-          style={[
-            type.body,
-            styles.input,
-            { color: colors.text, backgroundColor: colors.bg, borderColor: colors.border },
-          ]}
-        />
-      </View>
-
-      <View style={styles.field}>
-        <Text style={[type.bodySmall, styles.fieldLabel, { color: colors.text }]}>Proyecto</Text>
+        <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>Proyecto</Text>
         <ProjectSelect projects={projects} value={projectId} onChange={setProjectId} />
         {projects.length === 0 && (
           <Text style={[type.bodySmall, { color: colors.textMuted }]}>
@@ -79,57 +68,37 @@ function Form({ projects, onClose, onSave }: Omit<Props, 'visible'>) {
       </View>
 
       <View style={[styles.milestone, { backgroundColor: colors.surfaceMuted }]}>
+        <View style={[styles.milestoneIcon, { backgroundColor: colors.accentSoft }]}>
+          <Icon name="star-outline" size={20} color={colors.accentStrong} />
+        </View>
         <View style={styles.milestoneText}>
           <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>Marcar como hito</Text>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>Para los logros que querrás recordar</Text>
+          <Text style={[type.caption, { color: colors.textMuted }]}>Para los logros que querrás recordar</Text>
         </View>
         <Switch
           value={isMilestone}
           onValueChange={setIsMilestone}
-          trackColor={{ true: colors.accent, false: colors.border }}
+          trackColor={{ true: colors.accent, false: colors.textMuted + '66' }}
+          thumbColor="#FFFFFF"
           accessibilityLabel="Marcar como hito"
         />
       </View>
 
-      <Pressable
-        onPress={save}
-        disabled={!canSave}
-        accessibilityRole="button"
-        accessibilityState={{ disabled: !canSave }}
-        style={[styles.save, { backgroundColor: colors.accent, opacity: canSave ? 1 : 0.4 }]}>
-        <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>Guardar logro</Text>
-      </Pressable>
+      <Button label="Guardar logro" icon="check" onPress={save} disabled={!canSave} block />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  form: { gap: spacing.lg },
-  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  titleBlock: { gap: spacing.xs },
-  close: { minWidth: 44, minHeight: 44, alignItems: 'flex-end' },
+  form: { gap: spacing.xl },
   field: { gap: spacing.sm },
-  fieldLabel: { fontWeight: '600' },
-  input: {
-    minHeight: 96,
-    textAlignVertical: 'top',
-    padding: spacing.md,
-    borderRadius: radius.md,
-    borderWidth: 1,
-  },
   milestone: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     gap: spacing.md,
     padding: spacing.md,
     borderRadius: radius.md,
   },
+  milestoneIcon: { width: 40, height: 40, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center' },
   milestoneText: { flex: 1, gap: 2 },
-  save: {
-    minHeight: 48,
-    borderRadius: radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 });

@@ -1,15 +1,21 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { container } from '@/composition/container';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
+import { Button } from '@/shared/ui/Button';
+import { Icon } from '@/shared/ui/Icon';
+import { IconButton } from '@/shared/ui/IconButton';
+import { Text } from '@/shared/ui/Text';
+import { TextField } from '@/shared/ui/TextField';
 
 export function SignInScreen() {
   const { colors } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -27,48 +33,48 @@ export function SignInScreen() {
     }
   };
 
-  const inputStyle = [
-    type.body,
-    styles.input,
-    { color: colors.text, backgroundColor: colors.surface, borderColor: colors.border },
-  ];
-
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: colors.bg }]}>
-      <View style={styles.card}>
+      <View style={[styles.card, { backgroundColor: colors.surface, boxShadow: colors.shadowRaised }]}>
         <View style={styles.header}>
-          <Text style={[type.display, styles.title, { color: colors.text }]}>Wins</Text>
+          <View style={[styles.mark, { backgroundColor: colors.accent }]}>
+            <Icon name="check" size={28} color={colors.onAccent} />
+          </View>
+          <Text style={[type.display, { color: colors.text }]}>Wins</Text>
           <Text style={[type.body, { color: colors.textMuted }]}>Inicia sesión para ver qué avanzaste.</Text>
         </View>
 
-        <View style={styles.field}>
-          <Text style={[type.bodySmall, styles.label, { color: colors.text }]}>Correo electrónico</Text>
-          <TextInput
+        <View style={styles.fields}>
+          <TextField
+            label="Correo electrónico"
+            icon="email-outline"
             value={email}
             onChangeText={setEmail}
             placeholder="tu@correo.com"
-            placeholderTextColor={colors.textMuted}
             autoCapitalize="none"
             autoComplete="email"
             keyboardType="email-address"
             textContentType="emailAddress"
-            style={inputStyle}
           />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={[type.bodySmall, styles.label, { color: colors.text }]}>Contraseña</Text>
-          <TextInput
+          <TextField
+            label="Contraseña"
+            icon="lock-outline"
             value={password}
             onChangeText={setPassword}
             placeholder="••••••••"
-            placeholderTextColor={colors.textMuted}
-            secureTextEntry
+            secureTextEntry={!showPassword}
             autoCapitalize="none"
             autoComplete="current-password"
             textContentType="password"
             onSubmitEditing={canSubmit ? submit : undefined}
-            style={inputStyle}
+            trailing={
+              <IconButton
+                icon={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                accessibilityLabel={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                onPress={() => setShowPassword((current) => !current)}
+                size={18}
+              />
+            }
           />
         </View>
 
@@ -78,16 +84,12 @@ export function SignInScreen() {
           </Text>
         )}
 
-        <Pressable
+        <Button
+          label={submitting ? 'Iniciando sesión…' : 'Iniciar sesión'}
           onPress={submit}
           disabled={!canSubmit}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: !canSubmit }}
-          style={[styles.button, { backgroundColor: colors.accent, opacity: canSubmit ? 1 : 0.4 }]}>
-          <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>
-            {submitting ? 'Iniciando sesión…' : 'Iniciar sesión'}
-          </Text>
-        </Pressable>
+          block
+        />
       </View>
     </SafeAreaView>
   );
@@ -95,11 +97,8 @@ export function SignInScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.lg },
-  card: { width: '100%', maxWidth: 400, gap: spacing.lg },
-  header: { gap: spacing.sm },
-  title: { fontSize: 32, lineHeight: 36 },
-  field: { gap: spacing.sm },
-  label: { fontWeight: '600' },
-  input: { minHeight: 48, paddingHorizontal: spacing.md, borderRadius: radius.md, borderWidth: 1 },
-  button: { minHeight: 48, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center' },
+  card: { width: '100%', maxWidth: 420, borderRadius: radius.xl, padding: spacing.xxl, gap: spacing.xl },
+  header: { gap: spacing.sm, alignItems: 'flex-start' },
+  mark: { width: 52, height: 52, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm },
+  fields: { gap: spacing.lg },
 });

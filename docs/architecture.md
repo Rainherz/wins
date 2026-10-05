@@ -61,6 +61,7 @@ wins/
 │   │       ├── application/     # SignIn, AuthPort
 │   │       ├── infrastructure/  # SupabaseAuthAdapter
 │   │       └── presentation/
+│   ├── shell/                   # app navigation (sidebar / bottom bar) and the add-win entry point
 │   ├── shared/
 │   │   ├── ui/                  # atoms and molecules (Button, Chip, Star, Dot, Fab)
 │   │   ├── theme/               # tokens, light/dark, useTheme

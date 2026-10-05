@@ -17,7 +17,7 @@ Las tareas terminadas desaparecen. Al final de la semana parece que nada avanzó
 | **Cerrar el día** | Elige cómo se sintió el día (bien, regular, difícil), revisa los logros de hoy y deja una nota opcional sobre lo que se trabó. |
 | **Proyectos** | Cada proyecto con sus logros de la semana, la última actividad y un gráfico de 7 días. Permite crear proyectos nuevos, cada uno con su propio color. |
 
-Además: tema claro por defecto con una alternativa oscura, diseño adaptable (hojas inferiores en celular y modales centrados en pantallas anchas) e inicio de sesión para un solo usuario.
+Además: tema claro por defecto con una alternativa oscura, diseño adaptable (barra inferior y hojas en celular; barra lateral y diálogos centrados en pantallas anchas) e inicio de sesión para un solo usuario.
 
 ## Camino rápido
 
@@ -80,7 +80,8 @@ src/
 ├── app/            # Rutas de Expo Router (delgadas)
 ├── features/       # wins, projects, closeout, auth
 │   └── <feature>/{domain,application,infrastructure,presentation}
-├── shared/         # tokens de tema, componentes base, utilidades
+├── shared/         # tokens de tema, componentes base (Text, Button, Icon…), utilidades
+├── shell/          # navegación (barra lateral / inferior) y captura de logros
 └── composition/    # conecta los adaptadores de Supabase con los casos de uso
 supabase/migrations # esquema de la base de datos y políticas RLS
 ```
@@ -101,8 +102,6 @@ Cambiar Supabase por otro backend implica escribir solo nuevos adaptadores. Más
 
 ## Hoja de ruta
 
-- [ ] Navegación con barra lateral en escritorio
-- [ ] Set de íconos real y tipografía DM Sans
 - [ ] Publicar la versión web
 - [ ] Editar y eliminar logros y proyectos
 - [ ] Soporte sin conexión

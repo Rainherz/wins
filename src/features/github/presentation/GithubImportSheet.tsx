@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { container } from '@/composition/container';
 import { formatShortDate } from '@/shared/lib/dates';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
+import { Button } from '@/shared/ui/Button';
+import { Icon } from '@/shared/ui/Icon';
 import { Sheet } from '@/shared/ui/Sheet';
+import { SheetHeader } from '@/shared/ui/SheetHeader';
+import { Text } from '@/shared/ui/Text';
+import { TextField } from '@/shared/ui/TextField';
 import { GithubNotConnectedError, type ImportSuggestion } from '../application/getImportSuggestions';
 
 type Props = {
@@ -120,43 +125,28 @@ function Form({ from, to, onClose, onImported }: Omit<Props, 'visible'>) {
       return next;
     });
 
-  const primary = (enabled: boolean) => [
-    styles.primary,
-    { backgroundColor: colors.accent, opacity: enabled ? 1 : 0.4 },
-  ];
+  const description =
+    phase.kind === 'ready'
+      ? `Conectado como @${phase.login}. Elige qué quieres convertir en logro.`
+      : 'Trae tus PRs fusionados y los issues cerrados que tengas asignados.';
 
   return (
     <View style={styles.form}>
-      <View style={styles.titleRow}>
-        <View style={styles.titleBlock}>
-          <Text style={[type.label, { color: colors.textMuted }]}>GITHUB</Text>
-          <Text style={[type.title, { color: colors.text }]}>Importar logros</Text>
-        </View>
-        <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Cerrar" style={styles.close}>
-          <Text style={{ fontSize: 22, color: colors.textMuted }}>×</Text>
-        </Pressable>
-      </View>
+      <SheetHeader title="Importar de GitHub" description={description} onClose={onClose} />
 
-      {phase.kind === 'loading' && (
-        <Text style={[type.body, { color: colors.textMuted }]}>Buscando en GitHub…</Text>
-      )}
+      {phase.kind === 'loading' && <Text style={[type.body, { color: colors.textMuted }]}>Buscando en GitHub…</Text>}
 
       {phase.kind === 'error' && (
         <>
           <Text accessibilityRole="alert" style={[type.bodySmall, { color: colors.accentStrong }]}>
             {phase.message}
           </Text>
-          <Pressable onPress={reload} accessibilityRole="button" style={primary(true)}>
-            <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>Reintentar</Text>
-          </Pressable>
+          <Button label="Reintentar" icon="refresh" onPress={reload} />
         </>
       )}
 
       {phase.kind === 'connect' && (
         <>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>
-            Conecta GitHub para traer tus PRs fusionados y los issues cerrados que tengas asignados.
-          </Text>
           <View style={[styles.steps, { backgroundColor: colors.surfaceMuted }]}>
             <Text style={[type.bodySmall, { color: colors.text }]}>
               1. En GitHub abre Settings → Developer settings → Personal access tokens → Fine-grained tokens.
@@ -166,48 +156,43 @@ function Form({ from, to, onClose, onImported }: Omit<Props, 'visible'>) {
             </Text>
             <Text style={[type.bodySmall, { color: colors.text }]}>3. Pega el token aquí.</Text>
           </View>
-          <TextInput
+
+          <TextField
+            label="Token de GitHub"
+            icon="key-outline"
             value={token}
             onChangeText={setToken}
             placeholder="github_pat_…"
-            placeholderTextColor={colors.textMuted}
             secureTextEntry
             autoCapitalize="none"
             autoCorrect={false}
-            style={[
-              type.body,
-              styles.input,
-              { color: colors.text, backgroundColor: colors.bg, borderColor: colors.border },
-            ]}
           />
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>
+          <Text style={[type.caption, { color: colors.textMuted }]}>
             El token se guarda en tu base de datos de Supabase, protegido por tu sesión.
           </Text>
+
           {actionError && (
             <Text accessibilityRole="alert" style={[type.bodySmall, { color: colors.accentStrong }]}>
               {actionError}
             </Text>
           )}
-          <Pressable
+          <Button
+            label={busy ? 'Conectando…' : 'Conectar'}
+            icon="github"
             onPress={connect}
             disabled={busy || token.trim() === ''}
-            accessibilityRole="button"
-            style={primary(!busy && token.trim() !== '')}>
-            <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>
-              {busy ? 'Conectando…' : 'Conectar'}
-            </Text>
-          </Pressable>
+            block
+          />
         </>
       )}
 
       {phase.kind === 'ready' && (
         <>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>
-            Conectado como @{phase.login}. Elige qué quieres convertir en logro.
-          </Text>
-
           {phase.items.length === 0 ? (
-            <Text style={[type.body, { color: colors.textMuted }]}>No hay nada nuevo para importar en esta semana.</Text>
+            <View style={[styles.emptyBox, { backgroundColor: colors.surfaceMuted }]}>
+              <Icon name="check-all" size={24} color={colors.textMuted} />
+              <Text style={[type.body, { color: colors.textMuted }]}>No hay nada nuevo para importar en esta semana.</Text>
+            </View>
           ) : (
             <View style={styles.list}>
               {phase.items.map((item) => {
@@ -218,22 +203,31 @@ function Form({ from, to, onClose, onImported }: Omit<Props, 'visible'>) {
                     onPress={() => toggle(item.externalId)}
                     accessibilityRole="checkbox"
                     accessibilityState={{ checked }}
-                    style={[
+                    style={({ hovered }) => [
                       styles.item,
                       {
-                        backgroundColor: checked ? colors.accentSoft : colors.surface,
+                        backgroundColor: checked ? colors.accentSoft : hovered ? colors.surfaceMuted : colors.surface,
                         borderColor: checked ? colors.accent : colors.border,
                       },
                     ]}>
-                    <Text style={{ fontSize: 20, color: checked ? colors.accentStrong : colors.textMuted }}>
-                      {checked ? '☑' : '☐'}
-                    </Text>
+                    <Icon
+                      name={checked ? 'checkbox-marked' : 'checkbox-blank-outline'}
+                      size={22}
+                      color={checked ? colors.accentStrong : colors.textMuted}
+                    />
                     <View style={styles.itemBody}>
                       <Text style={[type.bodySmall, { color: colors.text, fontWeight: '600' }]}>{item.title}</Text>
-                      <Text style={[type.bodySmall, { color: colors.textMuted }]}>
-                        {item.kind === 'pr' ? 'PR' : 'Issue'} · {item.repo} #{item.number} · {formatShortDate(item.doneAt)}
-                        {!item.projectExists ? ' · proyecto nuevo' : ''}
-                      </Text>
+                      <View style={styles.itemMeta}>
+                        <Icon
+                          name={item.kind === 'pr' ? 'source-merge' : 'circle-slice-8'}
+                          size={14}
+                          color={colors.textMuted}
+                        />
+                        <Text style={[type.caption, { color: colors.textMuted }]}>
+                          {item.repo} #{item.number} · {formatShortDate(item.doneAt)}
+                          {!item.projectExists ? ' · proyecto nuevo' : ''}
+                        </Text>
+                      </View>
                     </View>
                   </Pressable>
                 );
@@ -248,22 +242,20 @@ function Form({ from, to, onClose, onImported }: Omit<Props, 'visible'>) {
           )}
 
           {phase.items.length > 0 && (
-            <Pressable
+            <Button
+              label={
+                busy
+                  ? 'Importando…'
+                  : `Importar ${selected.size} ${selected.size === 1 ? 'logro' : 'logros'}`
+              }
+              icon="download"
               onPress={importSelected}
               disabled={busy || selected.size === 0}
-              accessibilityRole="button"
-              style={primary(!busy && selected.size > 0)}>
-              <Text style={[type.body, { color: colors.onAccent, fontWeight: '600' }]}>
-                {busy
-                  ? 'Importando…'
-                  : `Importar ${selected.size} ${selected.size === 1 ? 'logro' : 'logros'}`}
-              </Text>
-            </Pressable>
+              block
+            />
           )}
 
-          <Pressable onPress={disconnect} disabled={busy} accessibilityRole="button" style={styles.link}>
-            <Text style={[type.bodySmall, { color: colors.textMuted }]}>Desconectar GitHub</Text>
-          </Pressable>
+          <Button label="Desconectar GitHub" variant="quiet" onPress={disconnect} disabled={busy} flush />
         </>
       )}
     </View>
@@ -271,12 +263,9 @@ function Form({ from, to, onClose, onImported }: Omit<Props, 'visible'>) {
 }
 
 const styles = StyleSheet.create({
-  form: { gap: spacing.lg },
-  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  titleBlock: { gap: spacing.xs },
-  close: { minWidth: 44, minHeight: 44, alignItems: 'flex-end' },
-  steps: { borderRadius: radius.md, padding: spacing.md, gap: spacing.sm },
-  input: { minHeight: 48, paddingHorizontal: spacing.md, borderRadius: radius.md, borderWidth: 1 },
+  form: { gap: spacing.xl },
+  steps: { borderRadius: radius.md, padding: spacing.lg, gap: spacing.sm },
+  emptyBox: { borderRadius: radius.lg, padding: spacing.xl, gap: spacing.sm, alignItems: 'flex-start' },
   list: { gap: spacing.sm },
   item: {
     flexDirection: 'row',
@@ -287,6 +276,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   itemBody: { flex: 1, gap: 2 },
-  primary: { minHeight: 48, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center' },
-  link: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
+  itemMeta: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
 });

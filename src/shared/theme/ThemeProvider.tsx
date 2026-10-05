@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { Platform } from 'react-native';
 
 import { colors, type Colors, type Scheme } from './tokens';
 
@@ -12,6 +13,13 @@ const ThemeContext = createContext<ThemeValue | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [scheme, setScheme] = useState<Scheme>('light');
+
+  // Keep the parts of the browser outside the React tree (overscroll, form controls) in the theme.
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    document.documentElement.style.backgroundColor = colors[scheme].bg;
+    document.documentElement.style.colorScheme = scheme;
+  }, [scheme]);
 
   const value: ThemeValue = {
     scheme,

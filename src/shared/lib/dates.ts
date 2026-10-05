@@ -36,3 +36,6 @@ export const formatWeekRange = (start: Date) => {
 /** Whole calendar days from `date` to `now` (0 = same day). */
 export const daysAgo = (date: Date, now: Date) =>
   Math.round((startOfDay(now).getTime() - startOfDay(date).getTime()) / 86_400_000);
+
+export const formatTime = (date: Date) =>
+  date.toLocaleTimeString('es', { hour: 'numeric', minute: '2-digit' });

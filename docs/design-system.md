@@ -1,10 +1,15 @@
 # Wins — Design System
 
-Source of truth for visual decisions. Base: Figma prototype, plus three elements
-adopted from the Stitch exploration (see "Adopted from Stitch").
+Source of truth for the visual decisions, matching what is implemented in
+`src/shared/theme/tokens.ts` and `src/shared/ui/`. Base: the Figma prototype, with the
+Stitch ideas that were adopted (milestone chip, per-project activity bars, per-day counts).
 
-Values below are estimated from screenshots. Treat them as the starting tokens and
-adjust once measured in the Figma file.
+## Direction
+
+A warm paper journal. Cream paper, ink text, orange used like a pen: only for the one main
+action, the current selection and the data that matters. Serif for the few big moments,
+one clean sans for everything you operate. The app is a tool people open every day, so
+familiarity and scanability win over decoration.
 
 ## Principles
 
@@ -12,142 +17,104 @@ adjust once measured in the Figma file.
 2. **Data first.** Decoration never competes with the user's wins.
 3. **No invented features.** UI copy only promises what the app does.
 4. **One identity per project.** A project keeps the same color everywhere.
-5. **Mobile-first, one codebase.** Same components on phone and desktop.
+5. **Mobile-first, one codebase.** Same components on phone and desktop; navigation is the only structural change.
 
 ## Themes
 
-Light is the default. Dark is an alternative toggled by the user.
+Light is the default, dark is an alternative toggled by the user. Both are defined together in `tokens.ts`.
 
 ## Color tokens
 
-### Neutrals
+| Token            | Light     | Dark      | Use                                         |
+|------------------|-----------|-----------|---------------------------------------------|
+| `bg`             | `#F7F5F1` | `#171614` | App background (paper)                      |
+| `sidebar`        | `#F0ECE4` | `#1D1B18` | Second neutral layer: sidebar, tab bar      |
+| `surface`        | `#FFFFFF` | `#211F1C` | Cards, sheets                               |
+| `surfaceMuted`   | `#EFECE6` | `#2A2723` | Inset areas, hover, bar tracks              |
+| `border`         | `#E6E1D8` | `#37332E` | Hairlines                                   |
+| `text`           | `#1F1E1B` | `#F3EFE8` | Primary text                                |
+| `textMuted`      | `#6B665E` | `#A8A29A` | Secondary text                              |
+| `accent`         | `#EE8A3E` | `#F29A57` | Fills and icons                             |
+| `accentStrong`   | `#B9500F` | `#F29A57` | Text and links on the page background       |
+| `accentSoft`     | `#FCEBDC` | `#3A281B` | Highlight backgrounds (milestones, selection) |
+| `onAccent`       | `#1F1E1B` | `#1F1E1B` | Text and icons on `accent`                  |
 
-| Token            | Light     | Dark      | Use                          |
-|------------------|-----------|-----------|------------------------------|
-| `bg`             | `#F7F5F1` | `#171614` | App background               |
-| `surface`        | `#FFFFFF` | `#211F1C` | Cards, modals                |
-| `surface-muted`  | `#EFECE6` | `#2A2723` | Inset areas, toggles         |
-| `border`         | `#E6E1D8` | `#37332E` | Card and input borders       |
-| `text`           | `#1F1E1B` | `#F3EFE8` | Primary text                 |
-| `text-muted`     | `#6B665E` | `#A8A29A` | Secondary text, labels       |
+Contrast: white text on `accent` is about 2.5:1 and fails, so anything on `accent` uses
+`onAccent` (dark ink, about 6.6:1) and orange text on the page uses `accentStrong`.
 
-### Accent
+**Projects** take a palette slot (5 colors) in creation order and keep it:
+`#6F96BD`, `#A084C4`, `#7BA383`, `#C99A5B`, `#C47F8F` (dark variants in `tokens.ts`).
 
-| Token           | Light     | Dark      | Use                                   |
-|-----------------|-----------|-----------|---------------------------------------|
-| `accent`        | `#EE8A3E` | `#F29A57` | Fills, icons, FAB, active bars        |
-| `accent-strong` | `#B9500F` | `#F29A57` | Text links, primary button with white text |
-| `accent-soft`   | `#FDEBDD` | `#3A281B` | Highlight backgrounds (milestones)    |
-
-Contrast rules (WCAG AA, 4.5:1 for body text):
-- White text on `accent` is about 2.5:1 and **fails**. Use `text` color on `accent`
-  fills, or use `accent-strong` when the button needs white text (about 5:1).
-- Orange text on `bg` must use `accent-strong`, never `accent`.
-
-### Projects
-
-Assigned from this palette in creation order. The color is stored with the project.
-
-| Slot | Light     | Dark      |
-|------|-----------|-----------|
-| 1    | `#6F96BD` | `#86ABD0` |
-| 2    | `#A084C4` | `#B59BD4` |
-| 3    | `#7BA383` | `#92B99A` |
-| 4    | `#C99A5B` | `#D8AE72` |
-| 5    | `#C47F8F` | `#D597A5` |
-
-### Mood
-
-| Mood      | Light     | Dark      |
-|-----------|-----------|-----------|
-| `good`    | `#6E9B7E` | `#86B396` |
-| `so-so`   | `#A89560` | `#C1AE78` |
-| `tough`   | `#9A7A76` | `#B7938E` |
-
-Mood is always shown as an icon plus a text label. Never color alone.
+**Mood** is always an icon plus a text label, never color alone: good `#4F8A63`,
+so-so `#8C7A3B`, tough `#9A6B66`.
 
 ## Typography
 
-Family: **DM Sans** (the Figma output renders close to it; confirm in the file).
-Fallback: system sans-serif.
+Two families, loaded with `expo-font`:
 
-| Role          | Size / Line | Weight | Use                        |
-|---------------|-------------|--------|----------------------------|
-| `display`     | 40 / 44     | 500    | Screen titles ("This week")|
-| `title`       | 24 / 30     | 500    | Section titles             |
-| `stat`        | 28 / 32     | 600    | "12 wins" numbers          |
-| `body`        | 16 / 24     | 400    | Win titles, inputs         |
-| `body-small`  | 14 / 20     | 400    | Secondary text             |
-| `label`       | 12 / 16     | 600    | Uppercase eyebrow, tracked +0.08em |
+- **DM Serif Display**: screen titles (`display`, 40 / 34 on phones) and the big week figure (`hero`, 34).
+- **DM Sans** 400 / 500 / 600 / 700: everything else.
 
-On mobile `display` drops to 32 / 36.
+| Role        | Size / Line | Weight | Use                          |
+|-------------|-------------|--------|------------------------------|
+| `display`   | 40 / 44     | serif  | Screen titles                |
+| `hero`      | 34 / 38     | serif  | "11 logros", project counts  |
+| `title`     | 22 / 28     | 600    | Sheet titles                 |
+| `heading`   | 18 / 24     | 600    | Day headers, project names   |
+| `body`      | 16 / 24     | 400    | Win titles, inputs           |
+| `bodySmall` | 14 / 20     | 400–600| Secondary text, buttons      |
+| `caption`   | 12 / 16     | 500    | Metadata, chart labels       |
 
-## Spacing, radius, elevation
+No eyebrow labels above headings. Custom fonts ship one file per weight, so always render
+text through `@/shared/ui/Text`, which maps `fontWeight` to the right DM Sans file.
 
-- Spacing scale (px): 4, 8, 12, 16, 24, 32, 48. Base unit 4.
-- Radius: `sm` 8 (chips, inputs), `md` 12 (rows), `lg` 20 (cards, modals), `full` (pills, FAB uses `lg`).
-- Elevation: cards use a 1px `border` and no shadow. Modals and FAB use one soft
-  shadow (`0 8px 24px` at 12% `text`).
-- Touch targets: minimum 44x44 px (the star toggle needs a larger hit area than its icon).
+## Depth, spacing, radius
 
-## Layout and responsiveness
+- Cards and sheets use soft layered shadows (`shadowCard`, `shadowRaised`): a small offset plus a wide blur, never a hard or zero-offset shadow. Hairlines separate rows inside a card.
+- Spacing scale (px): 4, 8, 12, 16, 24, 32, 48.
+- Radius: 8, 12 (controls), 16 (cards), 24 (hero cards, sheets), full (chips).
+- Touch targets: minimum 44x44.
 
-| Breakpoint | Navigation                     | Content                    |
-|------------|--------------------------------|----------------------------|
-| < 768      | Bottom tab bar (2 tabs) + FAB  | Single column, 16 px gutter|
-| 768–1023   | Bottom tab bar + FAB           | Centered, max 640          |
-| >= 1024    | Left sidebar, 240 px           | Centered, max 720          |
+## Icons
 
-- The FAB must not cover content: reserve bottom padding equal to tab bar + FAB height.
-- Modals become bottom sheets under 768 px.
+One family: Material Community Icons (outline style), through `@/shared/ui/Icon`. No text
+glyphs or emoji as icons.
 
-## Navigation
+## Layout and navigation
 
-Two destinations only: **Week** and **Projects**. "Close out today" is an action
-(link on Week), not a tab. No Insights screen in the MVP.
+| Width     | Navigation                                      | Content                      |
+|-----------|-------------------------------------------------|------------------------------|
+| < 1024    | Bottom bar: Semana, raised center "+", Proyectos| Single column, 16 px gutter  |
+| >= 1024   | Left sidebar (264 px): brand, "Agregar logro", Semana, Proyectos, account, theme, sign out | Centered column, max 720 |
+
+- Adding a win is one entry point (`CaptureProvider`), reachable from the center "+" on phones and the sidebar button on desktop.
+- Sheets are bottom sheets under 768 px and centered dialogs above.
+- Days are listed most recent first; future days collapse into one "Por venir" line.
 
 ## Components
 
-| Component          | Notes                                                                 |
-|--------------------|-----------------------------------------------------------------------|
-| `MomentumCard`     | Total wins, project count, delta vs last week, 7 bars **with counts**.|
-| `DayHeader`        | Weekday + date, win count, mood icon. Future days show "Still open".  |
-| `WinRow`           | Project dot, title, project name, milestone star. Milestone = `accent-soft` background, 3px `accent` left bar and a "Milestone" chip. |
-| `EmptyDay`         | One neutral sentence and an "Add" link. No guilt wording.             |
-| `ProjectCard`      | Color avatar, name, description, wins this week, "last touched", 7-day mini bars. |
-| `AddWinSheet`      | Text area, custom project select, milestone toggle. Save disabled until text exists. |
-| `CloseOutSheet`    | Mood picker (3 options), today's wins, optional "what got stuck" note, "Close the day" disabled until a mood is picked. |
-| `ProjectSelect`    | **Custom** component. The native browser select is not acceptable.    |
-| `Fab`              | Opens `AddWinSheet`.                                                  |
-| `ThemeToggle`      | Light/dark switch, persists the choice.                               |
+| Component        | Notes |
+|------------------|-------|
+| `Button`         | `primary` (the one main action, accent fill), `secondary` (outlined), `quiet` (text). Optional icon, `block`, `flush`. |
+| `IconButton`     | 44x44 target around any icon; hover and pressed states. |
+| `TextField`      | Label, optional leading icon and trailing control, focus ring in accent. |
+| `Sheet` / `SheetHeader` | Container and title row shared by every sheet. |
+| `WeekPulse`      | Total, project count, delta vs last week, and a 7-day strip with counts, bars and mood icons. Bars grow in once on load (the only authored motion). |
+| `DaySection`     | Day header (weekday, date, "Hoy", count, mood chip) plus the day's wins in one card with hairlines, or a calm empty state. |
+| `WinRow`         | Project dot, title, project, time, GitHub link when imported, milestone star. Milestone rows get the soft accent background and a filled star. |
+| `ProjectCard`    | Colored avatar, name, description, "Activo hace N días", this-week count and 7-day bars. |
+| `ProjectSelect`  | Chips with the project color. Replaces the native select. |
+| `AppNav`         | Sidebar or bottom bar depending on width. |
 
-Atomic levels: atoms (Button, Chip, Icon, Star, Dot), molecules (WinRow, DayHeader,
-MoodOption), organisms (MomentumCard, WeekList, ProjectCard, sheets).
-
-## Component states
-
-Every interactive component defines: default, hover (web), pressed, focus-visible
-(2px `accent-strong` ring), disabled, and error where it applies.
-
-## Adopted from Stitch
-
-1. Visible **Milestone** chip on starred wins.
-2. Per-project **7-day mini bars** and "last touched" on the Projects screen.
-3. Per-day **win counts** and a **Copy summary** action on the weekly card.
+Interactive components define default, hover (web), pressed, focus-visible, disabled and,
+where it applies, error. Focus rings and text selection are themed in `src/global.css`.
 
 ## Content rules
 
-- No motivational quotes, no stock photos, no decorative banners.
-- No claims about features that do not exist (encryption, sync, vaults).
+- No motivational quotes, stock photos or decorative banners.
+- No claims about features that do not exist.
 - Tone: calm and neutral. Missing days are never framed as failure.
-- All UI copy is neutral Spanish (second person singular, no regional slang or voseo).
+- UI copy is neutral Spanish (second person singular, no regional slang or voseo).
   Glossary: win = logro, milestone = hito, close out the day = cerrar el día, week = semana.
   Strings are inline in components for now. If a second language is ever needed, move
   them into a single catalog first.
-
-## Known issues to fix in the Figma file
-
-- Mobile: FAB overlaps content and the tab bar covers the last row.
-- Sample data: Saturday and Sunday show wins while labelled "Still open"; Wednesday
-  shows a "Tough" mood with nothing logged.
-- Weekly bars have no numeric labels.

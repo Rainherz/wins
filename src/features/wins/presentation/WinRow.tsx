@@ -1,8 +1,12 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
+import type { Project } from '@/features/projects/domain/project';
+import { formatTime } from '@/shared/lib/dates';
 import { radius, spacing, type } from '@/shared/theme/tokens';
 import { useTheme } from '@/shared/theme/ThemeProvider';
-import type { Project } from '@/features/projects/domain/project';
+import { Icon } from '@/shared/ui/Icon';
+import { IconButton } from '@/shared/ui/IconButton';
+import { Text } from '@/shared/ui/Text';
 import type { Win } from '../domain/win';
 
 type Props = {
@@ -16,37 +20,34 @@ export function WinRow({ win, project, onToggleMilestone }: Props) {
   const dotColor = project ? colors.projects[project.colorSlot] : colors.textMuted;
 
   return (
-    <View
-      style={[
-        styles.row,
-        { backgroundColor: win.isMilestone ? colors.accentSoft : colors.surface, borderColor: colors.border },
-        win.isMilestone && { borderLeftColor: colors.accent, borderLeftWidth: 3 },
-      ]}>
+    <View style={[styles.row, win.isMilestone && { backgroundColor: colors.accentSoft }]}>
       <View style={[styles.dot, { backgroundColor: dotColor }]} />
+
       <View style={styles.body}>
-        <Text style={[type.body, { color: colors.text }]}>{win.title}</Text>
+        <Text style={[type.body, { color: colors.text, fontWeight: win.isMilestone ? '600' : '400' }]}>{win.title}</Text>
         <View style={styles.meta}>
-          <Text style={[type.bodySmall, { color: colors.textMuted }]}>{project?.name ?? 'Sin proyecto'}</Text>
-          {win.externalId && <Text style={[type.bodySmall, { color: colors.textMuted }]}>· GitHub</Text>}
-          {win.isMilestone && (
-            <View style={[styles.chip, { backgroundColor: colors.accent }]}>
-              <Text style={[type.label, { color: colors.onAccent }]}>
-                HITO
-              </Text>
-            </View>
+          <Text style={[type.caption, { color: colors.textMuted }]}>{project?.name ?? 'Sin proyecto'}</Text>
+          <Text style={[type.caption, { color: colors.textMuted }]}>·</Text>
+          <Text style={[type.caption, { color: colors.textMuted }]}>{formatTime(win.achievedAt)}</Text>
+          {win.externalUrl && (
+            <Pressable
+              onPress={() => Linking.openURL(win.externalUrl!)}
+              accessibilityRole="link"
+              accessibilityLabel="Abrir en GitHub"
+              hitSlop={8}
+              style={styles.source}>
+              <Icon name="github" size={14} color={colors.textMuted} />
+            </Pressable>
           )}
         </View>
       </View>
-      <Pressable
-        onPress={onToggleMilestone}
-        hitSlop={12}
-        accessibilityRole="button"
+
+      <IconButton
+        icon={win.isMilestone ? 'star' : 'star-outline'}
+        color={win.isMilestone ? colors.accent : colors.textMuted}
         accessibilityLabel={win.isMilestone ? 'Quitar hito' : 'Marcar como hito'}
-        style={styles.star}>
-        <Text style={{ fontSize: 22, color: win.isMilestone ? colors.accent : colors.textMuted }}>
-          {win.isMilestone ? '★' : '☆'}
-        </Text>
-      </Pressable>
+        onPress={onToggleMilestone}
+      />
     </View>
   );
 }
@@ -54,16 +55,14 @@ export function WinRow({ win, project, onToggleMilestone }: Props) {
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: spacing.md,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.md,
-    borderWidth: 1,
+    paddingVertical: spacing.sm,
+    paddingLeft: spacing.lg,
+    paddingRight: spacing.xs,
   },
-  dot: { width: 10, height: 10, borderRadius: radius.full },
-  body: { flex: 1, gap: spacing.xs },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  chip: { paddingHorizontal: spacing.sm, paddingVertical: 2, borderRadius: radius.full },
-  star: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' },
+  dot: { width: 10, height: 10, borderRadius: radius.full, marginTop: spacing.md },
+  body: { flex: 1, gap: 2, paddingVertical: spacing.xs },
+  meta: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  source: { marginLeft: spacing.xs },
 });
